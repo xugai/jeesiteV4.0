@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jeesite.modules.resume.dao.TResumeDao">
+
+	<!-- 根据用户id查询数据-->
+	<select id="findByUserCode" resultType="TResume">
+		SELECT <include refid="tResumeColumns"/>
+		FROM t_resume  a
+		<where>
+			a.emp_code =#{userCode}
+		</where>
+	</select>
+
+	<!-- 根据用户id查询用户角色-->
+	<select id="findRole" resultType="String">
+		SELECT ur.role_code AS roleCode
+		FROM ${_prefix}sys_user_role ur
+		<where>
+			ur.user_code = #{userCode}
+		</where>
+	</select>
+
+	<sql id="tResumeColumns">
+		a.re_id AS "reId",
+		a.emp_code AS "empCode",
+		a.avatar  AS "avatar",
+		a.create_by As createBy,
+		a.create_date As createDate,
+		a.update_by As updateBy,
+		a.update_date As updateDate,
+		a.remarks As remarks,
+		a.status As status
+	</sql>
+</mapper>
