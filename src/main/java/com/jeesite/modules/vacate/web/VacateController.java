@@ -68,7 +68,7 @@ public class VacateController extends BaseController {
 	@RequestMapping(value = "form")
 	public String form(Vacate vacate, Model model) {
 		model.addAttribute("vacate", vacate);
-		return "modules/vacation/vacateForm2";
+		return "modules/vacate/vacateForm2";
 	}
 
 	/**
@@ -100,7 +100,7 @@ public class VacateController extends BaseController {
 	 */
 	@RequestMapping(value = "list_vacation")
 	public String listVacation(){
-		return "modules/vacation/vacateList1";
+		return "modules/vacate/vacateList1";
 	}
 
 	/**
@@ -121,7 +121,7 @@ public class VacateController extends BaseController {
 	 */
 	@RequestMapping(value = "list_task")
 	public String listTask(){
-		return "modules/vacation/vacateList2";
+		return "modules/vacate/vacateList2";
 	}
 
 	/**

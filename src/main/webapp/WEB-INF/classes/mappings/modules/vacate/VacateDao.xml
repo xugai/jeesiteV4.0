@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.jeesite.modules.vacation.dao.VacateDao">
+<mapper namespace="com.jeesite.modules.vacate.dao.VacateDao">
 
 	<!-- 查询数据
 	<select id="findList" resultType="Vacate">
@@ -39,7 +39,7 @@
 	<select id="getByEmpCode" resultType="Vacate">
 		SELECT
 		<include refid="allColumns"/>
-		from t_vacate
+		from t_vacate a
 		<where>
 			update_by = #{empCode}
 		</where>

@@ -9,7 +9,7 @@
 				<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
 			</div>
 		</div>
-		<#form:form id="inputForm" model="${vacate}" action="${ctx}/employee/employee/handle_task" method="post" class="form-horizontal">
+		<#form:form id="inputForm" model="${vacate}" action="${ctx}/employee/myEmployee/handle_task" method="post" class="form-horizontal">
 			<div class="box-body">
 				<div class="form-unit">${text('员工请假信息')}</div>
 				<#form:hidden path="vaId"/>
@@ -50,7 +50,7 @@
 							<label class="control-label col-sm-4" title="">
 								<span class="required "></span> 请假开始时间：<i class="fa icon-question hide"></i></label>
 							<div class="col-sm-8">
-								<#form:input path="startTime" class="form-control required" readOnly="true"/>
+								<#form:input path="startTime" dataFormat="date" class="form-control required" readOnly="true"/>
 							</div>
 						</div>
 					</div>
@@ -59,7 +59,7 @@
 							<label class="control-label col-sm-4" title="">
 								<span class="required "></span> 请假结束时间：<i class="fa icon-question hide"></i></label>
 							<div class="col-sm-8">
-								<#form:input path="endTime" class="form-control required" readOnly="true"/>
+								<#form:input path="endTime" dataFormat="date" class="form-control required" readOnly="true"/>
 							</div>
 						</div>
 					</div>

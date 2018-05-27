@@ -142,7 +142,7 @@ public class VacateService extends CrudService<VacateDao, Vacate> {
 				String empCode = vacateDao.getEmpCodeByEmpName(empName);
 				//实例化请假表
 				Vacate vacate = new Vacate();
-				//通过员工
+				//通过员工编号获得请假表
 				vacate = vacateDao.getByEmpCode(empCode);
 				vacateList.add(vacate);
 			}
