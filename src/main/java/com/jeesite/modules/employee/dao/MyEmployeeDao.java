@@ -20,4 +20,28 @@ public interface MyEmployeeDao extends CrudDao<MyEmployee> {
     public List<MyEmployee> findListByRole(@Param("first")int first, @Param("pageSize")int pageSize, @Param("myEmployee")MyEmployee myEmployee);
     public long findCountByRole(@Param("roleCode")String roleCode);
     public List<MyEmployee> findList(MyEmployee myEmployee);
+
+
+    /**
+     * 通过员工名字获得当前员工部门的部门编码
+     * @author BeHe
+     * @param empName
+     * @return
+     */
+    public String getOfficeCodeByEmpNme(String empName);
+
+    /**
+     * 通过部门编码获取当前部门的经理姓名
+     * @author BeHe
+     * @param officeCode
+     * @return
+     */
+    public String getEmpNameByOfficeCode(String officeCode);
+
+    /**
+     * 通过员工姓名获取员工编号
+     * @author BeHe
+     * @param empName
+     */
+    public String getEmpCodeByEmpName(String empName);
 }

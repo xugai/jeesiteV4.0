@@ -4,18 +4,17 @@
 package com.jeesite.modules.employee.entity;
 
 import com.jeesite.common.entity.BaseEntity;
+import com.jeesite.common.entity.DataEntity;
+import com.jeesite.common.mybatis.annotation.Column;
 import com.jeesite.common.mybatis.annotation.JoinTable;
-import com.jeesite.modules.sys.entity.Area;
+import com.jeesite.common.mybatis.annotation.Table;
+import com.jeesite.common.mybatis.mapper.query.QueryType;
 import com.jeesite.modules.sys.entity.Company;
 import com.jeesite.modules.sys.entity.Employee;
 import com.jeesite.modules.sys.entity.Office;
-import org.hibernate.validator.constraints.NotBlank;
+import org.apache.ibatis.type.Alias;
 import org.hibernate.validator.constraints.Length;
-
-import com.jeesite.common.entity.DataEntity;
-import com.jeesite.common.mybatis.annotation.Column;
-import com.jeesite.common.mybatis.annotation.Table;
-import com.jeesite.common.mybatis.mapper.query.QueryType;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.NotNull;
 
@@ -77,6 +76,7 @@ import javax.validation.constraints.NotNull;
 		)}
 )}, orderBy="a.update_date DESC"
 )
+@Alias("MyEmployee")
 public class MyEmployee extends DataEntity<MyEmployee> {
 
 	private static final long serialVersionUID = 1L;

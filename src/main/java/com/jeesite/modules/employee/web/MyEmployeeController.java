@@ -3,31 +3,27 @@
  */
 package com.jeesite.modules.employee.web;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.jeesite.common.config.Global;
+import com.jeesite.common.entity.Page;
+import com.jeesite.common.web.BaseController;
+import com.jeesite.modules.employee.entity.MyEmployee;
+import com.jeesite.modules.employee.service.MyEmployeeService;
 import com.jeesite.modules.sys.entity.EmpUser;
 import com.jeesite.modules.sys.entity.Employee;
 import com.jeesite.modules.sys.entity.User;
 import com.jeesite.modules.sys.service.EmpUserService;
 import com.jeesite.modules.sys.utils.EmpUtils;
 import com.jeesite.modules.sys.utils.UserUtils;
+import com.jeesite.modules.vacate.entity.Vacate;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import com.jeesite.common.config.Global;
-import com.jeesite.common.entity.Page;
-import com.jeesite.common.web.BaseController;
-import com.jeesite.modules.employee.entity.MyEmployee;
-import com.jeesite.modules.employee.service.MyEmployeeService;
-
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -225,5 +221,53 @@ public class MyEmployeeController extends BaseController {
 		myEmployeeService.delete(myEmployee);
 		return renderResult(Global.TRUE, "删除员工表成功！");
 	}
-	
+
+
+	/**
+	 * 员工创建新的请假单
+	 * @author BeHe
+	 * @return
+	 */
+	@RequestMapping(value = "create_vacation")
+	public String createVacation(Vacate vacate, Model model){
+//		Vacate vacate = new Vacate();
+		model.addAttribute("vacate", vacate);
+		return "modules/vacate/vacateForm1";
+	}
+
+	/**
+	 * 普通员工进行请假申请
+	 * @author BeHe
+	 * @param startTime
+	 * @param endTime
+	 * @param empReason
+	 */
+	@RequestMapping(value = "do_rest_apply", method = RequestMethod.POST)
+	@ResponseBody
+	public String restApply(String startTime, String endTime, String empReason){
+		User user = UserUtils.getUser();
+		com.jeesite.modules.sys.entity.Employee employee = (com.jeesite.modules.sys.entity.Employee) user.getRefObj();
+		if("true".equals(myEmployeeService.restApply(employee.getEmpName(), startTime, endTime, empReason))){
+			return renderResult(Global.TRUE, "提交请假单成功！");
+		}else{
+			return renderResult(Global.FALSE, "请假单提交失败，请重试！");
+		}
+	}
+
+	/**
+	 *部门经理提交审核
+	 * @author BeHe
+	 * @param status
+	 * @param manReason
+	 * @return
+	 */
+	@RequestMapping(value = "handle_task", method = RequestMethod.POST)
+	@ResponseBody
+	public String handleTask(String empCode, String status, String manReason){
+		User user = UserUtils.getUser();
+		if("true".equals(myEmployeeService.handleTask(empCode, status, manReason, user.getUserCode()))){
+			return renderResult(Global.TRUE, "审核成功！");
+		}
+		return renderResult(Global.FALSE, "审核失败，请查看错误原因！");
+	}
 }

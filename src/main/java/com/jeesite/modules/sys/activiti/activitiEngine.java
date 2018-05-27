@@ -7,6 +7,7 @@ import org.activiti.engine.runtime.Execution;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.task.TaskQuery;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +26,7 @@ public class activitiEngine {
 
 
     //创建流程引擎
+    @Test
     public void createProcessEngineByXmlCfg(){
         ProcessEngineConfiguration pec = ProcessEngineConfiguration.createProcessEngineConfigurationFromResource("activiti.cfg.xml");
         ProcessEngine new_processEngine = pec.buildProcessEngine();
@@ -32,6 +34,7 @@ public class activitiEngine {
     }
 
     //部署流程引擎
+    @Test
     public void deployProcessEngine(){
         RepositoryService repositoryService = processEngine.getRepositoryService();
         DeploymentBuilder builder = repositoryService.createDeployment();
@@ -100,8 +103,13 @@ public class activitiEngine {
         List<HistoricTaskInstance> lists =  processEngine.getHistoryService().
                                             createHistoricTaskInstanceQuery().
                                             taskAssignee(empName).list();
-        Task latestTask = taskQuery.executionId(lists.get(lists.size() - 1).getExecutionId()).singleResult();
-        return latestTask.getId();
+        Task latestTask = null;
+        for(HistoricTaskInstance taskInstance: lists){
+            if((latestTask = taskQuery.executionId(taskInstance.getExecutionId()).singleResult()) != null){
+                return latestTask.getId();
+            }
+        }
+        return null;
     }
 
     /*
