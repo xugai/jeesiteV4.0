@@ -59,6 +59,9 @@
 		from t_vacate a
 		<where>
 			${sqlMap.where.toSql()}
+			<if test="status != '' &amp;&amp; status != null">
+				and a.status = #{status}
+			</if>
 		</where>
 	</select>
 

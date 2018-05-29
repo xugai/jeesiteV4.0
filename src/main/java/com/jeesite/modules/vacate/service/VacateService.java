@@ -130,7 +130,7 @@ public class VacateService extends CrudService<VacateDao, Vacate> {
 	 * @return
 	 */
 	@Transactional(readOnly = false)
-	public List<Vacate> queryTask(String manName){
+	public Page<Vacate> queryTask(Page<Vacate> page, String manName){
 		List<Vacate> vacateList = new ArrayList<Vacate>();
 		List<Task> taskList = activitiEngine.queryTask(manName);
 		if(taskList != null && taskList.size() > 0){
@@ -144,9 +144,12 @@ public class VacateService extends CrudService<VacateDao, Vacate> {
 				Vacate vacate = new Vacate();
 				//通过员工编号获得请假表
 				vacate = vacateDao.getByEmpCode(empCode);
+				vacate.setPage(page);
 				vacateList.add(vacate);
 			}
-			return vacateList;
+			page.setList(vacateList);
+			page.setCount(vacateList.size());
+			return page;
 		}
 		return null;
 	}
