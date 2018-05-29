@@ -14,11 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 /**
  * 请假表信息维护Controller
@@ -34,11 +36,12 @@ public class VacateController extends BaseController {
 
 	/**
 	 * 获取数据
+	 * 说明一下，被 @ModelAttribute 注解的方法会在Controller每个方法执行之前都执行，因此对于一个Controller中包含多个URL的时候，要谨慎使用
 	 */
-	@ModelAttribute
+	/*@ModelAttribute
 	public Vacate get(String vaId, boolean isNewRecord) {
 		return vacateService.get(vaId, isNewRecord);
-	}
+	}*/
 
 	/**
 	 * 查询列表
@@ -66,8 +69,8 @@ public class VacateController extends BaseController {
 	 */
 	@RequiresPermissions("user:dept:view")
 	@RequestMapping(value = "form")
-	public String form(Vacate vacate, Model model) {
-		model.addAttribute("vacate", vacate);
+	public String form(String vaId, boolean isNewRecord, Model model) {
+		model.addAttribute("vacate", vacateService.get(vaId, isNewRecord));
 		return "modules/vacate/vacateForm2";
 	}
 
@@ -99,7 +102,9 @@ public class VacateController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "list_vacation")
-	public String listVacation(){
+	public String listVacation(Model model){
+		Vacate vacate = new Vacate();
+		model.addAttribute("vacate", vacate);
 		return "modules/vacate/vacateList1";
 	}
 
@@ -111,6 +116,7 @@ public class VacateController extends BaseController {
 	@ResponseBody
 	public Page<Vacate> queryVacation(Vacate vacate, HttpServletRequest request, HttpServletResponse response){
 //		User user = UserUtils.getUser();
+		System.out.println(vacate);
 		Page<Vacate> page =  vacateService.findPage(new Page<Vacate>(request, response), vacate);
 		return page;
 	}
@@ -120,7 +126,9 @@ public class VacateController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "list_task")
-	public String listTask(){
+	public String listTask(Model model){
+		Vacate vacate = new Vacate();
+		model.addAttribute("vacate", vacate);
 		return "modules/vacate/vacateList2";
 	}
 
@@ -130,11 +138,11 @@ public class VacateController extends BaseController {
 	 */
 	@RequestMapping(value = "query_task", method = RequestMethod.POST)
 	@ResponseBody
-	public List<Vacate> queryTask(){
+	public Page<Vacate> queryTask(HttpServletRequest request, HttpServletResponse response){
 		//获取部门经理的姓名
 		com.jeesite.modules.sys.entity.Employee employee = (com.jeesite.modules.sys.entity.Employee) UserUtils.getUser().getRefObj();
 		String manName = employee.getEmpName();
-		return vacateService.queryTask(manName);
+		return vacateService.queryTask(new Page<Vacate>(request,response,3) ,manName);
 	}
 	
 }
