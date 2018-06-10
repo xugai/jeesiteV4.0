@@ -44,4 +44,12 @@ public interface MyEmployeeDao extends CrudDao<MyEmployee> {
      * @param empName
      */
     public String getEmpCodeByEmpName(String empName);
+
+    /**
+     * 通过员工编号获取当前员工的职位编码
+     * @BeHe
+     * @param empCode
+     * @return
+     */
+    public List<String> getPostcodeByEmpcode(String empCode);
 }

@@ -91,4 +91,10 @@
 		js_sys_employee
 		where emp_name = #{empName}
 	</select>
+
+	<select id="getPostcodeByEmpcode" resultType="string">
+		select post_code
+		from js_sys_employee_post
+		where emp_code = #{empCode}
+	</select>
 </mapper>

@@ -53,10 +53,10 @@ public class proposalActiviti {
         return processInstance.getProcessInstanceId();
     }
 
-    @Test
+   /* @Test
     public void doTask(){
         processEngine.getTaskService().complete("232567");
-    }
+    }*/
 
     // TODO: 2018/6/6 新增proId参数，用以标识当前task是哪个流程实例的task，同时在设置变量时把key都改为部门机构的名字
     public static String handleTask(String proId, String officeName, String advice){

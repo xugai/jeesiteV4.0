@@ -17,18 +17,9 @@
 					<div class="col-xs-6">
 						<div class="form-group">
 							<label class="control-label col-sm-4" title="">
-								 员工姓名：<i class="fa icon-question hide"></i></label>
-							<div class="col-sm-8">
-								<#form:input value="${@UserUtils.getUser().getUserName()}" maxlength="255" class="form-control" readOnly="true"/>
-							</div>
-						</div>
-					</div>
-					<div class="col-xs-6">
-						<div class="form-group">
-							<label class="control-label col-sm-4" title="">
 								 员工ID：<i class="fa icon-question hide"></i></label>
 							<div class="col-sm-8">
-								<#form:input name="proEmpId" value="${@UserUtils.getUser().getUserCode()}" maxlength="255" class="form-control" readOnly="true"/>
+								<#form:input path="proEmpId" maxlength="255" class="form-control" readOnly="true"/>
 							</div>
 						</div>
 					</div>
@@ -37,14 +28,9 @@
 					<div class="col-xs-6">
 						<div class="form-group">
 							<label class="control-label col-sm-4" title="">
-								<span class="required ">*</span> 提案名：<i class="fa icon-question hide"></i></label>
+								 提案名：</label>
 							<div class="col-sm-8">
-								<%	if(isEmpty(proposal.proName)){ %>
-									<#form:input path="proName" maxlength="255" class="form-control required"/>
-								<% } %>
-								<% else{ %>
-									<#form:input value="${proposal.proName}" maxlength="255" class="form-control required" readOnly="true"/>
-								<% } %>
+								<#form:input path="proName" maxlength="255" class="form-control required" readOnly="true"/>
 							</div>
 						</div>
 					</div>
@@ -70,19 +56,22 @@
 				<div class="row">
 					<div class="col-xs-12">
 						<div class="form-group">
-							<% if(isEmpty(proposal.proId)) { %>
-								<label class="control-label col-sm-2">
-									<span class="required ">*</span> 提案文件上传：</label>
-								<div class="col-sm-10">
-										<#form:fileupload id="upload1" bizKey="${proposal.proId}" bizType="proposal_type" uploadType="all" class="" readonly="false"/>
-							<% } %>
-							<% else { %>
-								<label class="control-label col-sm-2">
-									<span class="required ">*</span> 上传的提案文件：</label>
-								<div class="col-sm-10">
-									<#form:fileupload id="upload1" bizKey="${proposal.proId}" bizType="proposal_type" uploadType="all" class="" readonly="true" preview="true"/>
-							<% } %>
-								</div>
+							<label class="control-label col-sm-2">
+								 提案文件：</label>
+							<div class="col-sm-10">
+								<#form:fileupload id="upload1" bizKey="${proposal.proId}" bizType="proposal_type" uploadType="all" class="" readonly="true" preview="true"/>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-6">
+						<div class="form-group">
+							<label class="control-label col-sm-4" title="">
+								<span class="required ">*</span> 审核意见：<i class="fa icon-question hide"></i></label>
+							<div class="col-sm-8">
+								<#form:radio name="advice" dictType="verify_advice" class="form-control required"/>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -90,9 +79,9 @@
 			<div class="box-footer">
 				<div class="row">
 					<div class="col-sm-offset-2 col-sm-10">
-						<% if(isEmpty(proposal.proId)) { %>
-							<button type="submit" class="btn btn-sm btn-primary" id="btnSubmit"><i class="fa fa-check"></i> ${text('提 交')}</button>&nbsp;
-						<% } %>
+
+						<button type="submit" class="btn btn-sm btn-primary" id="btnSubmit"><i class="fa fa-check"></i> ${text('提 交')}</button>&nbsp;
+
 						<button type="button" class="btn btn-sm btn-default" id="btnCancel" onclick="js.closeCurrentTabPage()"><i class="fa fa-reply-all"></i> ${text('关 闭')}</button>
 					</div>
 				</div>

@@ -6,7 +6,7 @@ package com.jeesite.modules.proposal.web;
 import com.jeesite.common.config.Global;
 import com.jeesite.common.entity.Page;
 import com.jeesite.common.web.BaseController;
-import com.jeesite.modules.employee.dao.EmployeeDao;
+import com.jeesite.modules.employee.dao.MyEmployeeDao;
 import com.jeesite.modules.proposal.entity.Proposal;
 import com.jeesite.modules.proposal.service.ProposalService;
 import com.jeesite.modules.sys.utils.UserUtils;
@@ -35,7 +35,7 @@ public class ProposalController extends BaseController {
 	private ProposalService proposalService;
 
 	@Autowired
-	private EmployeeDao employeeDao;
+	private MyEmployeeDao myEmployeeDao;
 
 	/**
 	 * 获取数据
@@ -58,7 +58,7 @@ public class ProposalController extends BaseController {
 		if(StringUtils.isBlank(isDept)) {
 			com.jeesite.modules.sys.entity.Employee employee = (com.jeesite.modules.sys.entity.Employee) UserUtils.getUser().getRefObj();
 			String empCode = employee.getEmpCode();
-			List<String> postCodeList = employeeDao.getPostcodeByEmpcode(empCode);
+			List<String> postCodeList = myEmployeeDao.getPostcodeByEmpcode(empCode);
 			for (String postCode : postCodeList) {
 				if ("dept".equals(postCode)) {
 					//若判断到当前用户是部门经理，则把身份标识isDept放入当前会话中，用以后续访问方便拿取
@@ -114,7 +114,7 @@ public class ProposalController extends BaseController {
 		if(StringUtils.isBlank(isDept)) {
 			com.jeesite.modules.sys.entity.Employee employee = (com.jeesite.modules.sys.entity.Employee) UserUtils.getUser().getRefObj();
 			String empCode = employee.getEmpCode();
-			List<String> postCodeList = employeeDao.getPostcodeByEmpcode(empCode);
+			List<String> postCodeList = myEmployeeDao.getPostcodeByEmpcode(empCode);
 			for (String postCode : postCodeList) {
 				if ("dept".equals(postCode)) {
 					isDept = "true";

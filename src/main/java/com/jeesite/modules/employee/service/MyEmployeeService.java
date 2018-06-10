@@ -8,7 +8,7 @@ import com.jeesite.common.entity.Page;
 import com.jeesite.common.service.CrudService;
 import com.jeesite.modules.employee.dao.MyEmployeeDao;
 import com.jeesite.modules.employee.entity.MyEmployee;
-import com.jeesite.modules.sys.activiti.activitiEngine;
+import com.jeesite.modules.sys.activiti.vacateActiviti;
 import com.jeesite.modules.sys.common.Const;
 import com.jeesite.modules.sys.util.datetimeUtil;
 import com.jeesite.modules.sys.utils.UserUtils;
@@ -144,7 +144,7 @@ public class MyEmployeeService extends CrudService<MyEmployeeDao, MyEmployee> {
 		//获取当前部门经理的名字
 		String manName = myEmployeeDao.getEmpNameByOfficeCode(officeCode);
 		//执行请假流程--->员工提交请假表
-		if(activitiEngine.startProcessEngine(empName, manName, days, empReason)){
+		if(vacateActiviti.startProcessEngine(empName, manName, days, empReason)){
 			return "true";
 		}else{
 			return "false";
@@ -168,8 +168,8 @@ public class MyEmployeeService extends CrudService<MyEmployeeDao, MyEmployee> {
 		/*MyEmployee employee = new MyEmployee();
 		employee.setEmpCode(empCode);
 		employee = myEmployeeDao.get(employee);*/
-		String taskId = activitiEngine.queryTaskId(UserUtils.getUser().getUserName());
-		if(activitiEngine.handleTask(taskId)){
+		String taskId = vacateActiviti.queryTaskId(UserUtils.getUser().getUserName());
+		if(vacateActiviti.handleTask(taskId)){
 			return "true";
 		}else{
 			return "false";
