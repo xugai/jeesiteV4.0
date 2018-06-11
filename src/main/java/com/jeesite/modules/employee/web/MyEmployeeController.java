@@ -263,9 +263,9 @@ public class MyEmployeeController extends BaseController {
 	 */
 	@RequestMapping(value = "handle_task", method = RequestMethod.POST)
 	@ResponseBody
-	public String handleTask(String empCode, String status, String manReason){
+	public String handleTask(String vaId, String empCode, String status, String manReason){
 		User user = UserUtils.getUser();
-		if("true".equals(myEmployeeService.handleTask(empCode, status, manReason, user.getUserCode()))){
+		if("true".equals(myEmployeeService.handleTask(vaId, empCode, status, manReason, user.getUserCode()))){
 			return renderResult(Global.TRUE, "审核成功！");
 		}
 		return renderResult(Global.FALSE, "审核失败，请查看错误原因！");

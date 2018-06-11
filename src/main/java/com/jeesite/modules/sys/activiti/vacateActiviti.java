@@ -3,7 +3,6 @@ package com.jeesite.modules.sys.activiti;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
-import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.runtime.Execution;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
@@ -25,7 +24,7 @@ public class vacateActiviti {
     private static Logger logger = LoggerFactory.getLogger(vacateActiviti.class);
     private static ProcessEngine processEngine = activitiEngine.applyProcessEngine();
 
-    public static boolean startProcessEngine(String empName, String manName, int days, String reason){
+    public static String startProcessEngine(String empName, String manName, int days, String reason){
         RuntimeService runtimeService = processEngine.getRuntimeService();
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("base", empName);
@@ -34,20 +33,21 @@ public class vacateActiviti {
         logger.info("流程执行对象的id：{} ", processInstance.getId());
         logger.info("流程执行实例的id：{} ", processInstance.getProcessInstanceId());
         logger.info("流程定义的id：{} ", processInstance.getProcessDefinitionId());
+        String processInstanceId = processInstance.getProcessInstanceId();
         Execution execution = runtimeService.createExecutionQuery()
-                .processInstanceId(processInstance.getProcessInstanceId())
+                .processInstanceId(processInstanceId)
                 .singleResult();
         runtimeService.setVariable(execution.getId(),"days", days);
         runtimeService.setVariable(execution.getId(),"reason", reason);
         //让工作流执行处理当前活跃的任务对象
         TaskService taskService = processEngine.getTaskService();
-        List<Task> taskList = taskService.createTaskQuery().list();
+        List<Task> taskList = taskService.createTaskQuery().processInstanceId(processInstanceId).list();
         if(taskList != null && taskList.size() > 0){
             Task task = taskList.get(taskList.size() - 1);
             handleTask(task.getId());
-            return true;
+            return processInstance.getProcessInstanceId();
         }
-        return false;
+        return null;
     }
 
     /**
@@ -79,14 +79,11 @@ public class vacateActiviti {
         }
     }
 
-    public static String queryTaskId(String empName){
+    public static String queryTaskId(String vaId, String empName){
         TaskService taskService = processEngine.getTaskService();
         TaskQuery taskQuery = taskService.createTaskQuery();
-        List<HistoricTaskInstance> lists =  processEngine.getHistoryService().
-                createHistoricTaskInstanceQuery().
-                taskAssignee(empName).list();
-        Task latestTask = taskQuery.executionId(lists.get(lists.size() - 1).getExecutionId()).singleResult();
-        return latestTask.getId();
+        Task task = taskQuery.processInstanceId(vaId).singleResult();
+        return task.getId();
     }
 
     /*
