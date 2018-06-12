@@ -26,7 +26,7 @@ jdbc:
   driver: com.mysql.jdbc.Driver
   url: jdbc:mysql://123.206.222.102:3306/jeesitedb?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull
   username: root
-  password: 1314Redandelion.cn
+  password: ab70995e559afaf97141cc8465bb0fa8353294f3954082a8315475a17566904b
   testSql: SELECT 1
 #
 #  # Oracle 数据库配置
