@@ -17,7 +17,6 @@ public class activitiEngine {
     private static Logger logger = LoggerFactory.getLogger(activitiEngine.class);
     public static ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
 
-
     //创建流程引擎
     public void createProcessEngineByXmlCfg(){
         ProcessEngineConfiguration pec = ProcessEngineConfiguration.createProcessEngineConfigurationFromResource("activiti.cfg.xml");
@@ -43,6 +42,4 @@ public class activitiEngine {
     public static ProcessEngine applyProcessEngine(){
         return processEngine;
     }
-
-
 }

@@ -1,0 +1,128 @@
+<% layout('/layouts/default.html', {title: 'cms_guestbook管理', libs: ['dataGrid']}){ %>
+<div class="main-content">
+	<div class="box box-main">
+		<div class="box-header">
+			<div class="box-title">
+				<i class="fa fa-list-alt"></i> ${text('留言管理')}
+			</div>
+			<div class="box-tools pull-right">
+				<a href="#" class="btn btn-default" id="btnSearch" title="${text('查询')}"><i class="fa fa-filter"></i> ${text('查询')}</a>
+				<% if(hasPermi('guestbook:cmsGuestbook:edit')){ %>
+					<a href="${ctx}/guestbook/cmsGuestbook/form" class="btn btn-default btnTool" title="${text('新增cms_guestbook')}"><i class="fa fa-plus"></i> ${text('新增')}</a>
+				<% } %>
+			</div>
+		</div>
+		<div class="box-body">
+			<#form:form id="searchForm" model="${cmsGuestbook}" action="${ctx}/guestbook/cmsGuestbook/listData" method="post" class="form-inline hide"
+					data-page-no="${parameter.pageNo}" data-page-size="${parameter.pageSize}" data-order-by="${parameter.orderBy}">
+				<div class="form-group">
+					<label class="control-label">姓名：</label>
+					<div class="control-inline">
+						<#form:input path="name" maxlength="100" class="form-control width-120"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label">remarks：</label>
+					<div class="control-inline">
+						<#form:input path="remarks" maxlength="1024" class="form-control width-120"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label">status：</label>
+					<div class="control-inline width-120">
+						<#form:select path="status" dictType="sys_search_status" blankOption="true" class="form-control"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<button type="submit" class="btn btn-primary btn-sm">${text('查询')}</button>
+					<button type="reset" class="btn btn-default btn-sm">${text('重置')}</button>
+				</div>
+			</#form:form>
+			<table id="dataGrid"></table>
+			<div id="dataGridPage"></div>
+		</div>
+	</div>
+</div>
+<% } %>
+<script>
+// 初始化DataGrid对象
+$('#dataGrid').dataGrid({
+	searchForm: $("#searchForm"),
+	columnModel: [
+		{header:'留言内容', name:'content', index:'a.content', width:150, align:"left", frozen:true, formatter: function(val, obj, row, act){
+			return '<a href="${ctx}/guestbook/cmsGuestbook/form?id='+row.id+'" class="btnList" data-title="${text('编辑cms_guestbook')}">'+(val||row.id)+'</a>';
+		}},
+		{header:'姓名', name:'name', index:'a.name', width:150, align:"left"},
+		{header:'图片', name:'img', index:'a.img', width:150, align:"left"},
+		{header:'IP', name:'ip', index:'a.ip', width:150, align:"left"},
+		{header:'create_by', name:'createBy', index:'a.create_by', width:150, align:"left"},
+		{header:'create_date', name:'createDate', index:'a.create_date', width:150, align:"center"},
+		{header:'remarks', name:'remarks', index:'a.remarks', width:150, align:"left"},
+		{header:'status', name:'status', index:'a.status', width:150, align:"center", formatter: function(val, obj, row, act){
+			return js.getDictLabel(${@DictUtils.getDictListJson('sys_search_status')}, val, '${text('未知')}', true);
+		}},
+		{header:'${text('操作')}', name:'actions', width:120, sortable:false, title:false, formatter: function(val, obj, row, act){
+			var actions = [];
+			<% if(hasPermi('guestbook:cmsGuestbook:edit')){ %>
+				actions.push('<a href="${ctx}/guestbook/cmsGuestbook/form?id='+row.id+'" class="btnList" title="${text('编辑cms_guestbook')}"><i class="fa fa-pencil"></i></a>&nbsp;');
+				actions.push('<a href="${ctx}/guestbook/cmsGuestbook/delete?id='+row.id+'" class="btnList" title="${text('删除cms_guestbook')}" data-confirm="${text('确认要删除该cms_guestbook吗？')}"><i class="fa fa-trash-o"></i></a>&nbsp;');
+			<% } %>
+			return actions.join('');
+		}}
+	],
+
+    caption: "留言列表",
+    subGrid: true,
+
+    subGridRowExpanded: function(subgrid_id, row_id) {//子表格容器的id和需要展开子表格的行id
+        bindSubGrid(subgrid_id, row_id);
+      console.log(row_id);
+    },
+    ajaxSuccess: function(data){
+        console.log(data);
+    }
+});
+
+function bindSubGrid(subgrid_id, collectLineId) {
+   //console.log("1111"+collectLineId);
+   // var contentId =collectLineId;
+    var subgrid_table_id;
+    subgrid_table_id = subgrid_id + "_t"; // (3)根据subgrid_id定义对应的子表格的table的id
+	var content ="";
+    var subgrid_pager_id;
+    subgrid_pager_id = subgrid_id + "_pgr" // (4)根据subgrid_id定义对应的子表格的pager的id
+
+    // (5)动态添加子报表的table和pager
+    $("#" + subgrid_id)
+        .html(
+            "<table id='" + subgrid_table_id + "' class='scroll' style='width: 100%;background: #d4d4d4;font-size: 14px;'></table>"+
+			"<a onclick=addComment("+"'"+collectLineId+"'"+")><div class='icon-note' style='float: right;padding: 8px 10px 8px;font-size: 22px;'></div></a>")
+    // (6)创建jqGrid对象
+    //$("#" + subgrid_table_id)
+   // $("#subgrid_table_id").empty();
+    js.ajaxSubmit('${ctx}/comment/cmsComment/findByGusetBookId?contentId='+collectLineId,
+        function(data){
+		console.log(subgrid_table_id);
+        $.each(data.list,function(id,val) {
+            console.log(val);
+            content  +="<tr class="+'text-left'+">"+
+                "<td><span style='color: #3c8dbc'>" + val.createBy+": "+"</span>"+val.content+ "</td>" +
+//                "<td class="+'text-left'+"> " +val.content + "</td>" +
+
+                "<td>" + val.createDate + "</td>"+
+               // "<td>" + val.like + "</td>"+
+                "</tr>"
+        })
+			$("#"+subgrid_table_id).append(content);
+        })
+
+}
+function addComment(Id){
+	//console.log(Id);
+	var url = "${ctx}/comment/cmsComment/form?contentId="+Id;
+	window.location.href = url;
+}
+
+
+
+</script>

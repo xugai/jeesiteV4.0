@@ -66,8 +66,8 @@ public class MyEmployeeService extends CrudService<MyEmployeeDao, MyEmployee> {
 	public Page<MyEmployee> findListByRole(Page page,MyEmployee myEmployee) {
 		int first = (page.getPageNo()-1)*page.getPageSize();
 		System.out.println("first:"+first);
-        System.out.println("role:"+myEmployee.getRoleCode());
-        String emp_code = EmpUtils.getEmployee().getEmpCode();
+		System.out.println("role:"+myEmployee.getRoleCode());
+		String emp_code = EmpUtils.getEmployee().getEmpCode();
 		page.setCount(myEmployeeDao.findCountByRole(myEmployee.getRoleCode(),emp_code));
 		page.setList(myEmployeeDao.findListByRole(first,page.getPageSize(),myEmployee,emp_code));
 		System.out.println("count:"+page.getCount());
