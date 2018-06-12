@@ -39,16 +39,24 @@ public class MyEmployeeController extends BaseController {
 	private MyEmployeeService myEmployeeService;
 	@Autowired
 	private EmpUserService empUserService;
+
 	/**
 	 * 获取数据
+	 * @param empCode
+	 * @param isNewRecord
+	 * @return
 	 */
 	@ModelAttribute
 	public MyEmployee get(String empCode, boolean isNewRecord) {
 		return myEmployeeService.get(empCode, isNewRecord);
 	}
-	
+
 	/**
 	 * 查询列表
+	 * @param myEmployee
+	 * @param model
+	 * @param request
+	 * @return
 	 */
 	@RequiresPermissions("employee:myEmployee:view")
 	@RequestMapping(value = {"list", ""})
@@ -71,7 +79,7 @@ public class MyEmployeeController extends BaseController {
 			empUser.setEmployee(employee);
 			List<EmpUser> empUserList = empUserService.findList(empUser);
 			if (empUserList != null && empUserList.size()>0) {
-				System.out.println("普通员工:"+empUserList.size());
+			    //普通员工
 				request.getSession().setAttribute("role","user");
 				model.addAttribute("role","user");
 				EmpUser empUser1 = empUserList.get(0);
@@ -81,49 +89,46 @@ public class MyEmployeeController extends BaseController {
 				model.addAttribute("myEmployee", myEmployee);
 				return "modules/employee/myEmployeeShow";
 			}else{
-				System.out.println("部长。");
+				//部长
 				request.getSession().setAttribute("roleCode","user");
 				request.getSession().setAttribute("role","dept");
 				model.addAttribute("role","dept");
 				//部长查看所有的员工信息，不包括部长
 				model.addAttribute("myEmployee", myEmployee);
 				return "modules/employee/myEmployeeList";
-
 			}
 		}
 
 	}
 
-
 	/**
 	 * 查询列表数据
+	 * @param myEmployee
+	 * @param request
+	 * @param response
+	 * @return
 	 */
 	@RequiresPermissions("employee:myEmployee:view")
 	@RequestMapping(value = "listData")
 	@ResponseBody
-	public Page<MyEmployee> listData(MyEmployee myEmployee, HttpServletRequest request, HttpServletResponse response,Model model) {
+	public Page<MyEmployee> listData(MyEmployee myEmployee, HttpServletRequest request, HttpServletResponse response) {
 		System.out.println("listData");
 		myEmployee.getOffice().setIsQueryChildren(true);
 		myEmployee.getCompany().setIsQueryChildren(true);
 		Page<MyEmployee> page = new Page<MyEmployee>(request, response);
 		//根据角色返回数据
-		try{
-			String roleCode = request.getSession().getAttribute("roleCode").toString();
-			System.out.println(roleCode);
-			if (roleCode != null) {
-				myEmployee.setRoleCode(roleCode);
-
-			}
-			request.getSession().setAttribute("roleCode",null);
-		}catch (NullPointerException ex){
-			ex.getStackTrace();
-		}
+        myEmployee.setRoleCode("user");
 		page = myEmployeeService.findListByRole(page,myEmployee);
 		return page;
 	}
 
 	/**
-	 * 查看编辑表单
+	 *查看编辑表单
+	 * @param myEmployee
+	 * @param op
+	 * @param model
+	 * @param request
+	 * @return
 	 */
 	@RequiresPermissions("employee:myEmployee:view")
 	@RequestMapping(value = "form")
@@ -144,6 +149,8 @@ public class MyEmployeeController extends BaseController {
 
 	/**
 	 * 保存员工表
+	 * @param myEmployee
+	 * @return
 	 */
 	@RequiresPermissions("employee:myEmployee:edit")
 	@PostMapping(value = "save")
@@ -154,6 +161,10 @@ public class MyEmployeeController extends BaseController {
 	}
 	/**
 	 * 修改员工表
+	 * @param myEmployee
+	 * @param request
+	 * @param model
+	 * @return
 	 */
 	@RequiresPermissions("employee:myEmployee:edit")
 	@PostMapping(value = "SaveOrUpdate")
@@ -178,6 +189,8 @@ public class MyEmployeeController extends BaseController {
 
 	/**
 	 * 修改员工表
+	 * @param myEmployee
+	 * @return
 	 */
 	@RequiresPermissions("employee:myEmployee:edit")
 	@PostMapping(value = "update")
@@ -189,6 +202,8 @@ public class MyEmployeeController extends BaseController {
 
 	/**
 	 * 停用员工表
+	 * @param myEmployee
+	 * @return
 	 */
 	@RequiresPermissions("employee:myEmployee:edit")
 	@RequestMapping(value = "disable")
@@ -198,9 +213,11 @@ public class MyEmployeeController extends BaseController {
 		myEmployeeService.updateStatus(myEmployee);
 		return renderResult(Global.TRUE, "停用员工表成功");
 	}
-	
+
 	/**
 	 * 启用员工表
+	 * @param myEmployee
+	 * @return
 	 */
 	@RequiresPermissions("employee:myEmployee:edit")
 	@RequestMapping(value = "enable")

@@ -11,6 +11,7 @@ import com.jeesite.modules.employee.entity.MyEmployee;
 import com.jeesite.modules.sys.activiti.vacateActiviti;
 import com.jeesite.modules.sys.common.Const;
 import com.jeesite.modules.sys.util.datetimeUtil;
+import com.jeesite.modules.sys.utils.EmpUtils;
 import com.jeesite.modules.sys.utils.UserUtils;
 import com.jeesite.modules.vacate.entity.Vacate;
 import com.jeesite.modules.vacate.service.VacateService;
@@ -65,9 +66,10 @@ public class MyEmployeeService extends CrudService<MyEmployeeDao, MyEmployee> {
 	public Page<MyEmployee> findListByRole(Page page,MyEmployee myEmployee) {
 		int first = (page.getPageNo()-1)*page.getPageSize();
 		System.out.println("first:"+first);
-		System.out.println("role:"+myEmployee.getRoleCode());
-		page.setCount(myEmployeeDao.findCountByRole(myEmployee.getRoleCode()));
-		page.setList(myEmployeeDao.findListByRole(first,page.getPageSize(),myEmployee));
+        System.out.println("role:"+myEmployee.getRoleCode());
+        String emp_code = EmpUtils.getEmployee().getEmpCode();
+		page.setCount(myEmployeeDao.findCountByRole(myEmployee.getRoleCode(),emp_code));
+		page.setList(myEmployeeDao.findListByRole(first,page.getPageSize(),myEmployee,emp_code));
 		System.out.println("count:"+page.getCount());
 		return page;
 	}

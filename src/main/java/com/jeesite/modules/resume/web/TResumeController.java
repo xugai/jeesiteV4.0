@@ -122,7 +122,7 @@ public class TResumeController extends BaseController {
 			tResume.setEmpCode(EmpUtils.getEmployee().getEmpCode());
 		}
 		tResumeService.save(tResume);
-		return renderResult(Global.TRUE, "保存t_resume成功！");
+		return renderResult(Global.TRUE, "保存简历成功！");
 	}
 
 	/**
@@ -136,7 +136,7 @@ public class TResumeController extends BaseController {
 		tResumeService.update(tResume);
 		// 保存上传附件
 		FileUploadUtils.saveFileUpload(tResume.getReId(), "tResume_file");
-		return renderResult(Global.TRUE, "保存t_resume成功！");
+		return renderResult(Global.TRUE, "保存简历成功！");
 	}
 	/**
 	 * 停用t_resume
@@ -147,7 +147,7 @@ public class TResumeController extends BaseController {
 	public String disable(TResume tResume) {
 		tResume.setStatus(TResume.STATUS_DISABLE);
 		tResumeService.updateStatus(tResume);
-		return renderResult(Global.TRUE, "停用t_resume成功");
+		return renderResult(Global.TRUE, "停用简历管理功能成功");
 	}
 
 	/**
@@ -159,7 +159,7 @@ public class TResumeController extends BaseController {
 	public String enable(TResume tResume) {
 		tResume.setStatus(TResume.STATUS_NORMAL);
 		tResumeService.updateStatus(tResume);
-		return renderResult(Global.TRUE, "启用t_resume成功");
+		return renderResult(Global.TRUE, "启用简历管理成功");
 	}
 
 	/**
@@ -170,7 +170,7 @@ public class TResumeController extends BaseController {
 	@ResponseBody
 	public String delete(TResume tResume) {
 		tResumeService.delete(tResume);
-		return renderResult(Global.TRUE, "删除t_resume成功！");
+		return renderResult(Global.TRUE, "删除简历管理成功！");
 	}
 
 }

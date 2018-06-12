@@ -28,7 +28,7 @@
                 <div class="col-xs-6">
                     <div class="form-group">
                         <label class="control-label col-sm-4" title="">
-                            <span class="required "></span> emp_code：<i class="fa icon-question hide"></i></label>
+                            <span class="required "></span> 员工编号：<i class="fa icon-question hide"></i></label>
                         <div class="col-sm-8">
                             <#form:textarea path="empCode" readonly="true" rows="1" maxlength="200" class="form-control" />
                         </div>
@@ -40,7 +40,7 @@
                 <div class="col-xs-12">
                     <div class="form-group">
                         <label class="control-label col-sm-2" title="">
-                            <span class="required hide">*</span> remarks：<i class="fa icon-question hide"></i></label>
+                            <span class="required hide">*</span> 备注：<i class="fa icon-question hide"></i></label>
                         <div class="col-sm-10">
                             <#form:textarea path="remarks" rows="4" maxlength="1024" class="form-control"/>
                         </div>
@@ -54,7 +54,7 @@
                         <label class="control-label col-sm-2">附件上传：</label>
                         <div class="col-sm-10">
                             <#form:fileupload id="uploadFile" bizKey="${tResume.reId}" bizType="tResume_file"
-                                    uploadType="all" class="" readonly="false" preview="true"/>
+                                    uploadType="file" class="" readonly="false" preview="true" allowSuffixes=".pdf"/>
                         </div>
                     </div>
                 </div>
