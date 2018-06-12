@@ -17,24 +17,18 @@
 		a.remarks As remarks,
 		a.status As status
 	</sql>
+
 	<!-- 查询数据-->
 	<select id="findListByRole" resultType="MyEmployee">
 		SELECT   ${myEmployee.sqlMap.column.toSql()}
-		FROM     ${myEmployee.sqlMap.table.toSql()}
-		<if test="myEmployee.roleCode != null and myEmployee.roleCode != ''">
-			JOIN ${_prefix}sys_user_role ur ON ur.user_code = a.emp_code
-		</if>
-		<where>
-			a.status = '0'
-			<if test="myEmployee.roleCode != null and myEmployee.roleCode != ''">
-				AND  ur.role_code = #{myEmployee.roleCode}
-			</if>
-			<if test="myEmployee.office.officeName != null and myEmployee.office.officeName != ''">
-				AND a.office_name = #{myEmployee.office.officeName}
-			</if>
-			<if test="myEmployee.company.companyName != null and myEmployee.company.companyName != ''">
-				AND a.company_name = #{myEmployee.company.companyName}
-			</if>
+		FROM     js_sys_employee a
+        LEFT JOIN js_sys_company c ON c.company_code = a.company_code
+		JOIN js_sys_office o ON o.office_code = a.office_code
+        JOIN js_sys_user_role ur ON ur.user_code = a.emp_code
+        <where>
+			a.status = 0
+			AND a.office_code = (select b.office_code from js_sys_employee b where b.emp_code = #{myEmp_code})
+			AND ur.role_code =#{myEmployee.roleCode}
 			<if test="myEmployee.empName != null and myEmployee.empName != ''">
 				AND a.emp_name like concat('%',#{myEmployee.empName},'%')
 			</if>
@@ -57,6 +51,7 @@
 			<if test="roleCode != null and roleCode != ''">
 				ur.role_code = #{roleCode}
 			</if>
+            AND a.office_code = (select b.office_code from js_sys_employee b where b.emp_code = #{myEmp_code})
 		</where>
 	</select>
 

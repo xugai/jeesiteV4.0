@@ -16,7 +16,7 @@
 			<#form:form id="searchForm" model="${tResume}" action="${ctx}/resume/tResume/listData" method="post" class="form-inline hide"
                             data-page-no="${parameter.pageNo}" data-page-size="${parameter.pageSize}" data-order-by="${parameter.orderBy}">
                 <div class="form-group">
-                <label class="control-label">emp_code：</label>
+                <label class="control-label">用户编号：</label>
                 <div class="control-inline width-120" >
                     <#form:treeselect id="empCode" title="${text('用户选择')}"
                             path="empCode" labelPath=""
@@ -24,16 +24,13 @@
                 </div>
             </div>
 				<div class="form-group">
-					<label class="control-label">avatar：</label>
-				</div>
-				<div class="form-group">
-					<label class="control-label">remarks：</label>
+					<label class="control-label">备注：</label>
 					<div class="control-inline">
 						<#form:input path="remarks" maxlength="1024" class="form-control width-120"/>
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="control-label">status：</label>
+					<label class="control-label">状态：</label>
 					<div class="control-inline width-120">
 						<#form:select path="status" dictType="sys_search_status" blankOption="true" class="form-control"/>
 					</div>
@@ -55,26 +52,19 @@
 $('#dataGrid').dataGrid({
 	searchForm: $("#searchForm"),
 	columnModel: [
-		{header:'emp_code', name:'empCode', index:'a.emp_code', width:150, align:"left", frozen:true, formatter: function(val, obj, row, act){
+		{header:'用户编号', name:'empCode', index:'a.emp_code', width:150, align:"left", frozen:true, formatter: function(val, obj, row, act){
 			return '<a href="${ctx}/resume/tResume/form?reId='+row.reId+'" class="btnList" data-title="${text('编辑t_resume')}">'+(val||row.id)+'</a>';
 		}},
-		{header:'avatar', name:'avatar', index:'a.avatar', width:150, align:"left"},
-		{header:'create_date', name:'createDate', index:'a.create_date', width:150, align:"center"},
-		{header:'remarks', name:'remarks', index:'a.remarks', width:150, align:"left"},
-		{header:'status', name:'status', index:'a.status', width:150, align:"center", formatter: function(val, obj, row, act){
+		{header:'上传路径', name:'avatar', index:'a.avatar', width:150, align:"left"},
+		{header:'创建时间', name:'createDate', index:'a.create_date', width:150, align:"center"},
+		{header:'备注', name:'remarks', index:'a.remarks', width:150, align:"left"},
+		{header:'状态', name:'status', index:'a.status', width:150, align:"center", formatter: function(val, obj, row, act){
 			return js.getDictLabel(${@DictUtils.getDictListJson('sys_search_status')}, val, '${text('未知')}', true);
 		}},
 		{header:'${text('操作')}', name:'actions', width:120, sortable:false, title:false, formatter: function(val, obj, row, act){
 			var actions = [];
 			<% if(hasPermi('resume:tResume:edit')){ %>
-				actions.push('<a href="${ctx}/resume/tResume/form?reId='+row.reId+'" class="btnList" title="${text('编辑t_resume')}"><i class="fa fa-pencil"></i></a>&nbsp;');
-				if (row.status == Global.STATUS_NORMAL){
-					actions.push('<a href="${ctx}/resume/tResume/disable?reId='+row.reId+'" class="btnList" title="${text('停用t_resume')}" data-confirm="${text('确认要停用该t_resume吗？')}"><i class="glyphicon glyphicon-ban-circle"></i></a>&nbsp;');
-				}
-				if (row.status == Global.STATUS_DISABLE){
-					actions.push('<a href="${ctx}/resume/tResume/enable?reId='+row.reId+'" class="btnList" title="${text('启用t_resume')}" data-confirm="${text('确认要启用该t_resume吗？')}"><i class="glyphicon glyphicon-ok-circle"></i></a>&nbsp;');
-				}
-				actions.push('<a href="${ctx}/resume/tResume/delete?reId='+row.reId+'" class="btnList" title="${text('删除t_resume')}" data-confirm="${text('确认要删除该t_resume吗？')}"><i class="fa fa-trash-o"></i></a>&nbsp;');
+				actions.push('<a href="${ctx}/resume/tResume/form?reId='+row.reId+'" class="btnList" title="${text('编辑该员工简历')}"><i class="fa fa-pencil"></i></a>&nbsp;');
 			<% } %>
 			return actions.join('');
 		}}

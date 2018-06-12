@@ -17,8 +17,16 @@ import java.util.List;
  */
 @MyBatisDao
 public interface MyEmployeeDao extends CrudDao<MyEmployee> {
-    public List<MyEmployee> findListByRole(@Param("first")int first, @Param("pageSize")int pageSize, @Param("myEmployee")MyEmployee myEmployee);
-    public long findCountByRole(@Param("roleCode")String roleCode);
+    /**
+     *
+     * @param first         偏移量
+     * @param pageSize      页面数据数
+     * @param myEmployee    条件查询的条件
+     * @param myEmp_code    当前部长的编号
+     * @return
+     */
+    public List<MyEmployee> findListByRole(@Param("first")int first, @Param("pageSize")int pageSize, @Param("myEmployee")MyEmployee myEmployee,@Param("myEmp_code")String myEmp_code);
+    public long findCountByRole(@Param("roleCode")String roleCode,@Param("myEmp_code")String myEmp_code);
     public List<MyEmployee> findList(MyEmployee myEmployee);
 
 
