@@ -3,15 +3,17 @@
  */
 package com.jeesite.modules.resume.service;
 
-import com.jeesite.common.entity.Page;
-import com.jeesite.common.service.CrudService;
-import com.jeesite.modules.file.utils.FileUploadUtils;
-import com.jeesite.modules.resume.dao.TResumeDao;
-import com.jeesite.modules.resume.entity.TResume;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import com.jeesite.common.entity.Page;
+import com.jeesite.common.service.CrudService;
+import com.jeesite.modules.resume.entity.TResume;
+import com.jeesite.modules.resume.dao.TResumeDao;
+import com.jeesite.modules.file.utils.FileUploadUtils;
 
 /**
  * t_resumeService

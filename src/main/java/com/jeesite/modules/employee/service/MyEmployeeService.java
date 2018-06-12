@@ -8,7 +8,7 @@ import com.jeesite.common.entity.Page;
 import com.jeesite.common.service.CrudService;
 import com.jeesite.modules.employee.dao.MyEmployeeDao;
 import com.jeesite.modules.employee.entity.MyEmployee;
-import com.jeesite.modules.sys.activiti.vacateActiviti;
+import com.jeesite.modules.sys.activiti.activitiEngine;
 import com.jeesite.modules.sys.common.Const;
 import com.jeesite.modules.sys.util.datetimeUtil;
 import com.jeesite.modules.sys.utils.EmpUtils;
@@ -133,22 +133,20 @@ public class MyEmployeeService extends CrudService<MyEmployeeDao, MyEmployee> {
 		//往请假表中插入相关信息
 		Vacate vacate = new Vacate();
 		String empCode = myEmployeeDao.getEmpCodeByEmpName(empName);
+		String vaId = datetimeUtil.datetimeToStr(new Date(System.currentTimeMillis()));
+		vacate.setVaId(vaId);
 		vacate.setEmpCode(empCode);
 		vacate.setStartTime(date1);
 		vacate.setEndTime(date2);
 		vacate.setEmpReason(empReason);
 		vacate.setIsNewRecord(true);	//为原生自带的属性进行赋值，告诉框架本次操作是新增记录操作
-
+		vacateService.save(vacate);
 		//获取当前员工所在的部门编号
 		String officeCode = myEmployeeDao.getOfficeCodeByEmpNme(empName);
 		//获取当前部门经理的名字
 		String manName = myEmployeeDao.getEmpNameByOfficeCode(officeCode);
-		//获取本次请假流程的工作流编号，作为请假单的主键请假单编号进行存储
-		String vaId = vacateActiviti.startProcessEngine(empName, manName, days, empReason);
 		//执行请假流程--->员工提交请假表
-		if(!StringUtils.isBlank(vaId)){
-			vacate.setVaId(vaId);
-			vacateService.save(vacate);
+		if(activitiEngine.startProcessEngine(empName, manName, days, empReason)){
 			return "true";
 		}else{
 			return "false";
@@ -163,15 +161,17 @@ public class MyEmployeeService extends CrudService<MyEmployeeDao, MyEmployee> {
 	 * @return
 	 */
 	@Transactional(readOnly=false)
-	public String handleTask(String vaId, String empCode, String status, String manReason, String updator){
+	public String handleTask(String empCode, String status, String manReason, String updator){
+		//获取当前员工提交的请假表的主键Id
+		String vaId = vacateService.getVaId(empCode);
 		//往当前员工提交的请假表中插入审核状态和审核说明
 		vacateService.updateByVerify(vaId, manReason, status, updator);
 		//通过当前请假的员工姓名获取他的请假单所对应的任务对象Id
 		/*MyEmployee employee = new MyEmployee();
 		employee.setEmpCode(empCode);
 		employee = myEmployeeDao.get(employee);*/
-		String taskId = vacateActiviti.queryTaskId(vaId, UserUtils.getUser().getUserName());
-		if(vacateActiviti.handleTask(taskId)){
+		String taskId = activitiEngine.queryTaskId(UserUtils.getUser().getUserName());
+		if(activitiEngine.handleTask(taskId)){
 			return "true";
 		}else{
 			return "false";

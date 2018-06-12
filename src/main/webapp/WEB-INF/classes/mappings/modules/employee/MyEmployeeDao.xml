@@ -30,7 +30,7 @@
 			AND a.office_code = (select b.office_code from js_sys_employee b where b.emp_code = #{myEmp_code})
 			AND ur.role_code =#{myEmployee.roleCode}
 			<if test="myEmployee.empName != null and myEmployee.empName != ''">
-				AND a.emp_name like concat('%',#{myEmployee.empName},'%')
+				AND a.emp_name = #{myEmployee.empName}
 			</if>
 			<if test="myEmployee.flag != null and myEmployee.flag != ''">
 				AND a.flag = #{myEmployee.flag}
@@ -85,11 +85,5 @@
 		from
 		js_sys_employee
 		where emp_name = #{empName}
-	</select>
-
-	<select id="getPostcodeByEmpcode" resultType="string">
-		select post_code
-		from js_sys_employee_post
-		where emp_code = #{empCode}
 	</select>
 </mapper>
