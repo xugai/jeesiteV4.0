@@ -25,7 +25,10 @@ jdbc:
   type: mysql
   driver: com.mysql.jdbc.Driver
   url: jdbc:mysql://123.206.222.102:3306/jeesitedb?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull
+# url: jdbc:mysql://127.0.0.1:3306/jeesitedb?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull
+#  url: jdbc:mysql://123.207.31.125:3306/jeesitedb?useSSL=false&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull
   username: root
+#  password: 1314Redandelion.cn
   password: 1314Redandelion.cn
   testSql: SELECT 1
 #

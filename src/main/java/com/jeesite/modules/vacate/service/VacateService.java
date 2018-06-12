@@ -6,7 +6,6 @@ package com.jeesite.modules.vacate.service;
 import com.jeesite.common.entity.Page;
 import com.jeesite.common.service.CrudService;
 import com.jeesite.modules.sys.activiti.activitiEngine;
-import com.jeesite.modules.sys.activiti.vacateActiviti;
 import com.jeesite.modules.sys.entity.User;
 import com.jeesite.modules.sys.utils.UserUtils;
 import com.jeesite.modules.vacate.dao.VacateDao;
@@ -133,7 +132,7 @@ public class VacateService extends CrudService<VacateDao, Vacate> {
 	@Transactional(readOnly = false)
 	public Page<Vacate> queryTask(Page<Vacate> page, String manName){
 		List<Vacate> vacateList = new ArrayList<Vacate>();
-		List<Task> taskList = vacateActiviti.queryTask(manName);
+		List<Task> taskList = activitiEngine.queryTask(manName);
 		if(taskList != null && taskList.size() > 0){
 			TaskService taskService = activitiEngine.processEngine.getTaskService();
 			for(Task task: taskList){
