@@ -137,6 +137,9 @@ public class VacateService extends CrudService<VacateDao, Vacate> {
 		if(taskList != null && taskList.size() > 0){
 			TaskService taskService = activitiEngine.processEngine.getTaskService();
 			for(Task task: taskList){
+				if(!task.getName().contains("请假")){
+					continue;
+				}
 				//获取请假员工的姓名
 				String empName = (String) taskService.getVariable(task.getId(), "base");
 				//通过员工姓名获取员工编码
@@ -145,6 +148,11 @@ public class VacateService extends CrudService<VacateDao, Vacate> {
 				Vacate vacate = new Vacate();
 				//通过员工编号获得请假表
 				vacate = vacateDao.getByEmpCode(empCode);
+				if(vacate == null){
+					page.setList(vacateList);
+					page.setCount(vacateList.size());
+					return page;
+				}
 				vacate.setPage(page);
 				vacateList.add(vacate);
 			}
@@ -152,7 +160,9 @@ public class VacateService extends CrudService<VacateDao, Vacate> {
 			page.setCount(vacateList.size());
 			return page;
 		}
-		return null;
+		page.setList(vacateList);
+		page.setCount(vacateList.size());
+		return page;
 	}
 	
 }

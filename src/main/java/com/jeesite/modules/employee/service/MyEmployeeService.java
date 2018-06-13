@@ -13,6 +13,7 @@ import com.jeesite.modules.sys.common.Const;
 import com.jeesite.modules.sys.util.datetimeUtil;
 import com.jeesite.modules.sys.utils.EmpUtils;
 import com.jeesite.modules.sys.utils.UserUtils;
+import com.jeesite.modules.vacate.dao.VacateDao;
 import com.jeesite.modules.vacate.entity.Vacate;
 import com.jeesite.modules.vacate.service.VacateService;
 import org.apache.commons.lang3.StringUtils;
@@ -34,8 +35,9 @@ import java.util.List;
 public class MyEmployeeService extends CrudService<MyEmployeeDao, MyEmployee> {
 
 	@Autowired
-	MyEmployeeDao myEmployeeDao;
-
+	private MyEmployeeDao myEmployeeDao;
+	@Autowired
+	private VacateDao vacateDao;
 	@Autowired
 	private VacateService vacateService;
 	/**
@@ -129,10 +131,24 @@ public class MyEmployeeService extends CrudService<MyEmployeeDao, MyEmployee> {
 		Date date2 = datetimeUtil.strToDate(endTime);
 		long msec1 = date1.getTime();
 		long msec2 = date2.getTime();
+		long currentDate = System.currentTimeMillis();
+		//判断传入的日期是否超前于系统当前时间
+		if(msec1 < currentDate || msec2 < currentDate){
+			return "dateError1";
+		}
+		//判断请假开始日期是否滞后于请假结束日期
+		if(msec1 > msec2){
+			return "dateError2";
+		}
 		int days = ((int)(msec2 - msec1)) / Const.DAY_MSEC;
+		String empCode = myEmployeeDao.getEmpCodeByEmpName(empName);
+		//判断用户是否非法提交请假单
+		if(vacateDao.getByEmpCode(empCode) != null){
+			return "businessError";
+		}
 		//往请假表中插入相关信息
 		Vacate vacate = new Vacate();
-		String empCode = myEmployeeDao.getEmpCodeByEmpName(empName);
+//		String empCode = myEmployeeDao.getEmpCodeByEmpName(empName);
 		vacate.setEmpCode(empCode);
 		vacate.setStartTime(date1);
 		vacate.setEndTime(date2);

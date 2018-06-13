@@ -47,4 +47,5 @@ public interface VacateDao extends CrudDao<Vacate> {
      * @return
      */
     public List<Vacate> queryVacation(Vacate vacate);
+
 }

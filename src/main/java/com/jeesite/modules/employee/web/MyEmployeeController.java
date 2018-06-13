@@ -264,8 +264,15 @@ public class MyEmployeeController extends BaseController {
 	public String restApply(String startTime, String endTime, String empReason){
 		User user = UserUtils.getUser();
 		com.jeesite.modules.sys.entity.Employee employee = (com.jeesite.modules.sys.entity.Employee) user.getRefObj();
-		if("true".equals(myEmployeeService.restApply(employee.getEmpName(), startTime, endTime, empReason))){
+		String result = myEmployeeService.restApply(employee.getEmpName(), startTime, endTime, empReason);
+		if("true".equals(result)){
 			return renderResult(Global.TRUE, "提交请假单成功！");
+		}else if("dateError1".equals(result)){
+			return renderResult(Global.FALSE, "请选择合理的请假时间，请重试！");
+		}else if("dateError2".equals(result)){
+			return renderResult(Global.FALSE, "请假开始日期滞后于请假结束日期，请重试！");
+		}else if("businessError".equals(result)){
+			return renderResult(Global.FALSE, "你已经提交过一张还未审核完的请假单，请等待审核完后再进行新的提交！");
 		}else{
 			return renderResult(Global.FALSE, "请假单提交失败，请重试！");
 		}
