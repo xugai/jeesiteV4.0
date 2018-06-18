@@ -103,15 +103,17 @@
 $("#inputForm").validate({
 	submitHandler: function(form){
 		js.ajaxSubmitForm($(form), function(data){
-			js.showMessage(data.message);
 			if(data.result == Global.TRUE){
+				js.showMessage(data.message);
 				window.location.href = 'http://127.0.0.1:8980/js/a/index#vacation/vacate/list_task';
 				/*js.closeCurrentTabPage(function(contentWindow){
 					contentWindow.page();
 				});*/
 			}
 			if(data.result == Global.False){
-				js.showErrorMessage(data.message);
+				js.alert(data.message,{icon: 2}, function(){
+
+				});
 			}
 		}, "json");
     }

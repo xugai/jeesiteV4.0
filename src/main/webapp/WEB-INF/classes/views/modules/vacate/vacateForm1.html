@@ -80,14 +80,16 @@
 $("#inputForm").validate({
 	submitHandler: function(form){
 		js.ajaxSubmitForm($(form), function(data){
-			js.showMessage(data.message);
 			if(data.result == Global.TRUE){
+				js.showMessage(data.message);
 				js.closeCurrentTabPage(function(contentWindow){
 					contentWindow.page();
 				});
 			}
-			if(data.result == Global.False){
-				js.showErrorMessage(data.message);
+			if(data.result == Global.FALSE){
+				js.alert(data.message, {icon:2}, function(){
+
+				});
 			}
 		}, "json");
     }
