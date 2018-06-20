@@ -1,0 +1,126 @@
+<% layout('/layouts/default.html', {title: '员工表管理', libs: ['dataGrid','validate']}){ %>
+<div class="main-content">
+	<div class="box box-main">
+		<div class="box-header">
+			<div class="box-title">
+				<i class="fa fa-list-alt"></i> ${text('员工表管理')}
+			</div>
+			<div class="box-tools pull-right">
+				<a href="#" class="btn btn-default" id="btnSearch" title="${text('查询')}"><i class="fa fa-filter"></i> ${text('查询')}</a>
+				<% if(hasPermi('employee:myEmployee:edit') && role == 'manager'){ %>
+				<a href="${ctx}/employee/myEmployee/form?op=add" class="btn btn-default btnTool" title="${text('新增员工表')}"><i class="fa fa-plus"></i> ${text('新增')}</a>
+				<% } %>
+				<a href="${ctx}/employee/myEmployee/export" class="btn btn-default" title="${text('员工导出')}"><i class="fa fa-plus"></i> ${text('导出')}</a>
+				<!-- <button  id="exportBtn"  type="button" onclick="submitExport();return false;" class="btn btn-default btnTool"><i class="fa fa-plus"></i>${text('导出')}</button> -->
+				<div style="display:inline">
+					<form id="importForm" action="${ctx}/employee/myEmployee/import" method="post" enctype="multipart/form-data">
+						<input id="uploadFile" style="display:inline;width: 330px" name="file" type="file"  accept=".xls,.xlsx"/>
+						<input id="btnImportSubmit" style="display:inline" class="btn btn-primary" type="submit" value="导 入 " />
+						<a href="${ctx}/employee/myEmployee/template">下载模板</a>
+					</form>
+				</div>
+			</div>
+		</div>
+		<div class="box-body">
+			<#form:form id="searchForm" name="searchForm" model="${myEmployee}" action="${ctx}/employee/myEmployee/listData" method="post" class="form-inline hide"
+			data-page-no="${parameter.pageNo}" data-page-size="${parameter.pageSize}" data-order-by="${parameter.orderBy}">
+			<div class="form-group">
+				<label class="control-label">员工姓名：</label>
+				<div class="control-inline">
+					<#form:input path="empName" maxlength="100" class="form-control width-120"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label">${text('机构')}：</label>
+				<div class="control-inline width-90">
+					<#form:treeselect id="office" title="${text('机构选择')}"
+					path="office.officeCode" labelPath="office.officeName"
+					url="${ctx}/sys/office/treeData" btnClass="btn-sm" allowClear="true" canSelectParent="true"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label">${text('公司')}：</label>
+				<div class="control-inline width-90">
+					<#form:treeselect id="company" title="${text('公司选择')}"
+					path="company.companyCode" labelPath="company.companyName"
+					url="${ctx}/sys/company/treeData" btnClass="btn-sm" allowClear="true" canSelectParent="true"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label">flag：</label>
+				<div class="control-inline width-120">
+					<#form:select path="flag" dictType="js_sys_empFlag" blankOption="true" class="form-control"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<button type="submit" class="btn btn-primary btn-sm">${text('查询')}</button>
+				<button type="reset" class="btn btn-default btn-sm">${text('重置')}</button>
+			</div>
+		</#form:form>
+		<table id="dataGrid"></table>
+		<div id="dataGridPage"></div>
+	</div>
+</div>
+</div>
+<% } %>
+<script>
+    // 初始化DataGrid对象
+    $('#dataGrid').dataGrid({
+        searchForm: $("#searchForm"),
+        columnModel: [
+            {header:'员工姓名', name:'empName', index:'a.emp_name', width:150, align:"left", frozen:true, formatter: function(val, obj, row, act){
+                    return '<a href="${ctx}/employee/myEmployee/form?empCode='+row.empCode+'" class="btnList" data-title="${text('编辑员工表')}">'+(val||row.id)+'</a>';
+                }},
+            {header:'英文名', name:'empNameEn', index:'a.emp_name_en', width:150, align:"left"},
+            {header:'机构名称', name:'office.officeName', index:'o.office_name', width:150, align:"left"},
+            {header:'公司名称', name:'company.companyName', index:'c.company_name', width:150, align:"left"},
+            {header:'flag', name:'flag', index:'a.flag', width:150, align:"center", formatter: function(val, obj, row, act){
+                    return js.getDictLabel(${@DictUtils.getDictListJson('js_sys_empFlag')}, val, '${text('未知')}', true);
+                }},
+            {header:'状态', name:'status', index:'a.status', width:150, align:"center", formatter: function(val, obj, row, act){
+                    return js.getDictLabel(${@DictUtils.getDictListJson('sys_search_status')}, val, '${text('未知')}', true);
+                }},
+            {header:'创建时间', name:'createDate', index:'a.create_date', width:150, align:"center"},
+            {header:'备注信息', name:'remarks', index:'a.remarks', width:150, align:"left"},
+            {header:'${text('操作')}', name:'actions', width:120, sortable:false, title:false, formatter: function(val, obj, row, act){
+                    var actions = [];
+                <% if(hasPermi('employee:myEmployee:edit')){ %>
+                        actions.push('<a href="${ctx}/employee/myEmployee/form?empCode='+row.empCode+'" class="btnList" title="${text('编辑员工表')}"><i class="fa fa-pencil"></i></a>&nbsp;');
+                        if (row.status == Global.STATUS_NORMAL){
+                            actions.push('<a href="${ctx}/employee/myEmployee/disable?empCode='+row.empCode+'" class="btnList" title="${text('停用员工表')}" data-confirm="${text('确认要停用该员工表吗？')}"><i class="glyphicon glyphicon-ban-circle"></i></a>&nbsp;');
+                        }
+                        if (row.status == Global.STATUS_DISABLE){
+                            actions.push('<a href="${ctx}/employee/myEmployee/enable?empCode='+row.empCode+'" class="btnList" title="${text('启用员工表')}" data-confirm="${text('确认要启用该员工表吗？')}"><i class="glyphicon glyphicon-ok-circle"></i></a>&nbsp;');
+                        }
+                        actions.push('<a href="${ctx}/employee/myEmployee/delete?empCode='+row.empCode+'" class="btnList" title="${text('删除员工表')}" data-confirm="${text('确认要删除该员工表吗？')}"><i class="fa fa-trash-o"></i></a>&nbsp;');
+                    <% } %>
+                    return actions.join('');
+                }}
+        ],
+        // 加载成功后执行事件
+        ajaxSuccess: function(data){
+
+        }
+    });
+
+    $("#importForm").validate({
+        submitHandler: function(form){
+            js.ajaxSubmitForm($(form), function(data){
+                //js.showMessage(data.toString());
+                if(data == "1"){
+                    js.showMessage("导入数据成功");
+                }
+                if(data == "0"){
+                    js.showErrorMessage("导入数据失败");
+                }
+            }, 'json');
+        }
+    });
+
+   /*  function submitExport(){
+        document.searchForm.action="/js/a/employee/myEmployee/export";
+        document.searchForm.submit();
+		return false;
+
+	} */
+</script>

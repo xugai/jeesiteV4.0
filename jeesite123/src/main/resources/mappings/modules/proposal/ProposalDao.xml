@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jeesite.modules.proposal.dao.ProposalDao">
+	
+	<!-- 查询数据
+	<select id="findList" resultType="Proposal">
+		SELECT ${sqlMap.column.toSql()}
+		FROM ${sqlMap.table.toSql()}
+		<where>
+			${sqlMap.where.toSql()}
+		</where>
+		ORDER BY ${sqlMap.order.toSql()}
+	</select> -->
+	<sql id="columns">
+		pro_id,
+		pro_emp_id,
+		pro_name,
+		create_date,
+		end_date,
+		pro_status,
+		pro_result
+	</sql>
+	<select id="getMinisterName" resultType="string">
+		select emp_name from js_sys_employee
+		where office_name = #{officeName} and
+		emp_code IN
+		(
+			select emp_code from js_sys_employee_post
+			where post_code = 'dept'
+		)
+	</select>
+
+	<select id="getProposal" resultType="Proposal">
+		SELECT <include refid="columns"/>
+		from t_proposal
+		<where>
+			<if test="proEmpId != null and !&quot;&quot;.equals(proEmpId)">
+				and pro_emp_id = #{proEmpId}
+			</if>
+			<if test="proName != null and !&quot;&quot;.equals(proName)">
+				and pro_name like concat('%', #{proName},'%')
+			</if>
+			<if test="proResult != null and !&quot;&quot;.equals(proResult)">
+				and pro_result like concat('%', #{proResult}, '%')
+			</if>
+		</where>
+	</select>
+
+	<select id="getHandleProposal" resultType="Proposal">
+		select <include refid="columns"/>
+		from t_proposal
+		<where>
+			pro_result is NULL
+			<if test="proEmpId != null and !&quot;&quot;.equals(proEmpId)">
+				and pro_emp_id = #{proEmpId}
+			</if>
+			<if test="proId != null and !&quot;&quot;.equals(proId)">
+				  and pro_id = #{proId}
+			</if>
+			<if test="proName != null and !&quot;&quot;.equals(proName)">
+				and pro_name like concat('%', #{proName},'%')
+			</if>
+		</where>
+	</select>
+
+
+
+	<update id="updateProposalStatus">
+		update t_proposal
+		set pro_status = #{newStatus}
+		where pro_id = #{proId}
+	</update>
+</mapper>

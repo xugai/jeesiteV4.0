@@ -1,0 +1,17 @@
+spring:
+
+  profiles:
+    active: default
+    
+  main:
+    banner-mode: "off"
+
+server:
+
+  port: 8980
+  context-path: /js
+  tomcat:
+    uri-encoding: UTF-8
+
+debug: true
+

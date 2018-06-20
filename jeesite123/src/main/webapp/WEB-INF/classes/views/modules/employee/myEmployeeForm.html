@@ -1,0 +1,168 @@
+<% layout('/layouts/default.html', {title: '员工表管理', libs: ['validate']}){ %>
+<div class="main-content" xmlns:>
+	<div class="box box-main">
+		<div class="box-header with-border">
+			<div class="box-title">
+				<i class="fa fa-list-alt"></i> ${text('员工表管理')}
+			</div>
+			<div class="box-tools pull-right">
+				<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+			</div>
+		</div>
+		<#form:form id="inputForm" model="${myEmployee}" action="${ctx}/employee/myEmployee/SaveOrUpdate" method="post" class="form-horizontal">
+			<div class="box-body">
+				<div class="form-unit">${text('基本信息')}</div>
+				<#form:hidden path="empCode"/>
+				<div class="row">
+					<div class="col-xs-6">
+						<div class="form-group">
+							<label class="control-label col-sm-4" title="">
+								<span class="required ">*</span> 员工姓名：<i class="fa icon-question hide"></i></label>
+							<div class="col-sm-8">
+								<%
+								if(op=='add'|| (myEmployee.flag == '1' && role == 'user')){
+								%>
+								<#form:input path="empName" maxlength="100" class="form-control required"/>
+                                <%
+								}else{
+								%>
+								<#form:input path="empName" maxlength="100" class="form-control required" readonly="true"/>
+								<%}%>
+							</div>
+						</div>
+					</div>
+					<div class="col-xs-6">
+						<div class="form-group">
+							<label class="control-label col-sm-4" title="">
+								<span class="required hide">*</span> 英文名：<i class="fa icon-question hide"></i></label>
+							<div class="col-sm-8">
+								<%
+								if(op=='add'|| (myEmployee.flag == '1' && role == 'user')){
+								%>
+								<#form:input path="empNameEn" maxlength="100" class="form-control"/>
+                                <%
+								}else{
+								%>
+								<#form:input path="empNameEn" maxlength="100" class="form-control" readonly="true"/>
+								<%}%>
+							</div>
+						</div>
+					</div>
+				</div>
+                <div class="row">
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" title="">
+                                <span class="required ">*</span> ${text('归属机构')}：<i class="fa icon-question hide"></i></label>
+                            <div class="col-sm-8">
+                                <%
+                                if(op=='add'){
+                                %>
+                                <#form:treeselect id="office" title="${text('机构选择')}"
+                                        path="office.officeCode" labelPath="office.officeName"
+                                        url="${ctx}/sys/office/treeData" class="required" allowClear="false"/>
+                                <%
+                                }else{
+								%>
+								<#form:input path="office.officeName" maxlength="100" class="form-control" readonly="true"/>
+								<%}%>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" title="">
+                                <span class="required hide">*</span> ${text('归属公司')}：<i class="fa icon-question hide"></i></label>
+                            <div class="col-sm-8">
+								<%
+								if(op=='add'){
+								%>
+                                <#form:treeselect id="company" title="${text('公司选择')}"
+                                        path="company.companyCode" labelPath="company.companyName"
+                                        url="${ctx}/sys/company/treeData" btnClass="" allowClear="true"/>
+								<%
+								}else{
+								%>
+								<#form:input path="company.companyName" maxlength="100" class="form-control" readonly="true"/>
+								<%}%>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+				<div class="row">
+					<div class="col-xs-6">
+						<div class="form-group">
+							<label class="control-label col-sm-4" title="">
+								<span class="required ">*</span> flag：<i class="fa icon-question hide"></i></label>
+							<div class="col-sm-8">
+                                <%
+                                if(op=='add' || role == 'dept'){
+                                %>
+								<#form:select path="flag" dictType="js_sys_empFlag" class="form-control required" />
+                                <%
+                                }else if(role == 'manager' || role == 'user'){
+                                    if(myEmployee.flag == '0'){
+                                %>
+                                <input value="未授权" class="form-control required" readonly="true"/>
+                                <%
+                                    }else if(myEmployee.flag == '1'){
+                                %>
+                                <input value="已授权" class="form-control required" readonly="true"/>
+                                <%
+                                    }
+                                }
+                                %>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-12">
+						<div class="form-group">
+							<label class="control-label col-sm-2" title="">
+								<span class="required hide">*</span> 备注信息：<i class="fa icon-question hide"></i></label>
+							<div class="col-sm-10">
+								<%
+								if(op=='add' || (myEmployee.flag == '1' && role == 'user')){
+								%>
+								<#form:textarea path="remarks" rows="4" maxlength="500" class="form-control"/>
+                                <%
+								}else{
+								%>
+								<#form:textarea path="remarks" rows="4" maxlength="500" class="form-control" readonly="true"/>
+								<%}%>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="box-footer">
+				<div class="row">
+					<div class="col-sm-offset-2 col-sm-10">
+						<% if (hasPermi('employee:myEmployee:edit') && (role == 'dept'|| role=='user')||op == 'add'){ %>
+                        <button type="submit" class="btn btn-sm btn-primary" id="btnSubmit"><i class="fa fa-check"></i> ${text('保 存')}</button>&nbsp;
+                        <% } %>
+						<button type="button" class="btn btn-sm btn-default" id="btnCancel" onclick="js.closeCurrentTabPage()"><i class="fa fa-reply-all"></i> ${text('关 闭')}</button>
+					</div>
+				</div>
+			</div>
+
+        </#form:form>
+	</div>
+</div>
+<% } %>
+<script>
+    $("#inputForm").validate({
+        submitHandler: function(form){
+            js.ajaxSubmitForm($(form), function(data){
+                js.showMessage(data.message);
+                if(data.result == Global.TRUE){
+                    js.closeCurrentTabPage(function(contentWindow){
+                        contentWindow.page();
+                    });
+                }
+            }, "json");
+        }
+    });
+</script>

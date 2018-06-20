@@ -1,0 +1,93 @@
+<% layout('/layouts/default.html', {title: 't_resume管理', libs: ['validate','fileupload']}){ %>
+<div class="main-content">
+	<div class="box box-main">
+		<div class="box-header with-border">
+			<div class="box-title">
+				<i class="fa fa-list-alt"></i> ${text(tResume.isNewRecord ? '新增t_resume' : '编辑t_resume')}
+			</div>
+			<div class="box-tools pull-right">
+				<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+			</div>
+		</div>
+		<#form:form id="inputForm" model="${tResume}" action="${ctx}/resume/tResume/save" method="post" class="form-horizontal">
+			<div class="box-body">
+				<div class="form-unit">${text('基本信息')}</div>
+				<#form:hidden path="reId"/>
+				<div class="row">
+					<div class="col-xs-6">
+						<div class="form-group">
+							<label class="control-label col-sm-4" title="">
+								<span class="required ">*</span> emp_code：<i class="fa icon-question hide"></i></label>
+							<div class="col-sm-8">
+                                <%
+                                    if(tResume.empCode == null){
+                                %>
+								<#form:treeselect id="empCode" title="${text('用户选择')}"
+									path="empCode" labelPath=""
+									url="${ctx}/sys/office/treeData?isLoadUser=true"
+									class=" required" allowClear="true"/>
+                                <%
+                               }else{
+                                %>
+								<#form:textarea path="empCode" readonly="true" rows="1" maxlength="200" class="form-control" />
+                                <%
+                                }
+                                %>
+                            </div>
+						</div>
+					</div>
+				<#form:hidden path="avatar"/>
+				</div>
+				<div class="row">
+					<div class="col-xs-12">
+						<div class="form-group">
+							<label class="control-label col-sm-2" title="">
+								<span class="required hide">*</span> remarks：<i class="fa icon-question hide"></i></label>
+							<div class="col-sm-10">
+								<#form:textarea path="remarks" rows="4" maxlength="1024" class="form-control"/>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-xs-12">
+						<div class="form-group">
+							<label class="control-label col-sm-2">附件上传：</label>
+							<div class="col-sm-10">
+								<#form:fileupload id="uploadFile" bizKey="${tResume.reId}" bizType="tResume_file"
+									uploadType="all" class="" readonly="false" preview="true"/>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<div class="box-footer">
+				<div class="row">
+					<div class="col-sm-offset-2 col-sm-10">
+						<% if (hasPermi('resume:tResume:edit')){ %>
+							<button type="submit" class="btn btn-sm btn-primary" id="btnSubmit"><i class="fa fa-check"></i> ${text('保 存')}</button>&nbsp;
+						<% } %>
+						<button type="button" class="btn btn-sm btn-default" id="btnCancel" onclick="js.closeCurrentTabPage()"><i class="fa fa-reply-all"></i> ${text('关 闭')}</button>
+					</div>
+				</div>
+			</div>
+		</#form:form>
+	</div>
+</div>
+<% } %>
+<script>
+$("#inputForm").validate({
+	submitHandler: function(form){
+		js.ajaxSubmitForm($(form), function(data){
+			js.showMessage(data.message);
+			if(data.result == Global.TRUE){
+//				js.closeCurrentTabPage(function(contentWindow){
+//					contentWindow.page();
+//				});
+			}
+		}, "json");
+    }
+});
+</script>

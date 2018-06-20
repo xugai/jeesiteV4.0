@@ -1,0 +1,83 @@
+
+
+
+<% layout('/layouts/default.html', {title: 't_resume管理', libs: ['validate','fileupload']}){ %>
+<style>
+    .pad{
+        margin: 0px 10px;
+    }
+</style>
+<div class="main-content">
+    <div class="box box-main">
+        <div class="box-header">
+            <div class="box-title">
+                <i class="fa fa-list-alt"></i> ${text('t_resume管理')}
+            </div>
+            <div class="box-tools pull-right">
+                <% if(tResume == null){ %>
+                <a href="${ctx}/resume/tResume/form" class="btn btn-default btnTool" title="${text('新增t_resume')}"><i class="fa fa-plus"></i> ${text('新增')}</a>
+                <% } %>
+            </div>
+        </div>
+        <% if(tResume != null){ %>
+        <#form:form id="ResumeForm" model="${tResume}" action="${ctx}/resume/tResume/save" method="post">
+        <div class="box-body">
+            <div class="form-unit">${text('个人简历信息')}</div>
+            <#form:hidden path="reId"/>
+            <div class="row pad">
+                <div class="col-xs-6">
+                    <div class="form-group">
+                        <label class="control-label col-sm-4" title="">
+                            <span class="required "></span> emp_code：<i class="fa icon-question hide"></i></label>
+                        <div class="col-sm-8">
+                            <#form:textarea path="empCode" readonly="true" rows="1" maxlength="200" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <#form:hidden path="avatar"/>
+            <div class="row pad">
+                <div class="col-xs-12">
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" title="">
+                            <span class="required hide">*</span> remarks：<i class="fa icon-question hide"></i></label>
+                        <div class="col-sm-10">
+                            <#form:textarea path="remarks" rows="4" maxlength="1024" class="form-control"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row pad">
+                <div class="col-xs-12">
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">附件上传：</label>
+                        <div class="col-sm-10">
+                            <#form:fileupload id="uploadFile" bizKey="${tResume.reId}" bizType="tResume_file"
+                                    uploadType="all" class="" readonly="false" preview="true"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+            <div class="box-footer">
+                <div class="row">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" class="btn btn-sm btn-primary" id="btnSubmit"><i class="fa fa-check"></i> ${text('修改')}</button>&nbsp;
+                    </div>
+                </div>
+            </div>
+        </#form:form><% } %>
+    </div>
+</div>
+<% } %>
+<script>
+    $("#ResumeForm").validate({
+        submitHandler: function(form){
+            js.ajaxSubmitForm($(form), function(data){
+                js.showMessage(data.message);
+            }, "json");
+        }
+    });
+</script>
