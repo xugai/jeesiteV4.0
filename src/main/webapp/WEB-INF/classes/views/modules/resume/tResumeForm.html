@@ -38,35 +38,57 @@
 					</div>
 				<#form:hidden path="avatar"/>
 				</div>
+
 				<div class="row">
 					<div class="col-xs-12">
 						<div class="form-group">
 							<label class="control-label col-sm-2" title="">
 								<span class="required hide">*</span> remarks：<i class="fa icon-question hide"></i></label>
 							<div class="col-sm-10">
+                                <%
+                                if(role != null && role == 'user'){
+                                %>
 								<#form:textarea path="remarks" rows="4" maxlength="1024" class="form-control"/>
+                                <%
+                                }else{
+                                %>
+                                <#form:textarea path="remarks" rows="4" maxlength="1024" class="form-control" readonly="true"/>
+                                <%
+                                }
+                                %>
 							</div>
 						</div>
 					</div>
 				</div>
 
-				<div class="row">
-					<div class="col-xs-12">
-						<div class="form-group">
-							<label class="control-label col-sm-2">附件上传：</label>
-							<div class="col-sm-10">
-								<#form:fileupload id="uploadFile" bizKey="${tResume.reId}" bizType="tResume_file"
-									uploadType="all" class="" readonly="true" preview="true" />
-							</div>
-						</div>
-					</div>
-				</div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="form-group">
+                            <label class="control-label col-sm-2">附件上传：</label>
+                            <div class="col-sm-10">
+                                <%
+                                if(role != null && role == 'user'){
+                                %>
+                                <#form:fileupload id="uploadFile" bizKey="${tResume.reId}" bizType="tResume_file"
+                                        uploadType="all" class="" readonly="false" preview="true" />
+                                <%
+                                }else{
+                                %>
+                                <#form:fileupload id="uploadFile" bizKey="${tResume.reId}" bizType="tResume_file"
+                                        uploadType="all" class="" readonly="true" preview="true" />
+                                <%
+                                }
+                                %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
 			</div>
 			<div class="box-footer">
 				<div class="row">
 					<div class="col-sm-offset-2 col-sm-10">
-						<% if (hasPermi('resume:tResume:edit')){ %>
+						<% if (hasPermi('resume:tResume:edit') && role != null && role == 'user'){ %>
 							<button type="submit" class="btn btn-sm btn-primary" id="btnSubmit"><i class="fa fa-check"></i> ${text('保 存')}</button>&nbsp;
 						<% } %>
 						<button type="button" class="btn btn-sm btn-default" id="btnCancel" onclick="js.closeCurrentTabPage()"><i class="fa fa-reply-all"></i> ${text('关 闭')}</button>
