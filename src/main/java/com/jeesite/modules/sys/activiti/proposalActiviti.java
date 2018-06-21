@@ -53,14 +53,14 @@ public class proposalActiviti {
         return processInstance.getProcessInstanceId();
     }
 
-    @Test
+/*    @Test
     public void doTask(){
 //        processEngine.getTaskService().setVariable("72516", "运营部", "true");
 //        Map<String, Object> params = new HashMap<String, Object>();
 //        params.put("result", "pass");
 //        processEngine.getTaskService().complete("77504", params);
         processEngine.getRuntimeService().signal("72501");
-    }
+    }*/
 
 
     public static String handleTask(String proId, String officeName, String advice){
