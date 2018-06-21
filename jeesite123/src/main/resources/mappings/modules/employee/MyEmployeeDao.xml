@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jeesite.modules.employee.dao.MyEmployeeDao">
+	<sql id="myEmployeeSql">
+		a.emp_code As empCode,
+		a.emp_name As empName,
+		a.emp_name_en As empNameEn,
+		a.office_code As office.officeCode,
+		a.office_name As office.officeName,
+		a.company_code As company.companyCode,
+		a.company_name As company.companyName,
+		a.flag As flag,
+		a.create_by As createBy,
+		a.create_date As createDate,
+		a.update_by As updateBy,
+		a.update_date As updateDate,
+		a.remarks As remarks,
+		a.status As status
+	</sql>
+	<!-- 查询数据-->
+	<select id="findListByRole" resultType="MyEmployee">
+		SELECT   ${myEmployee.sqlMap.column.toSql()}
+		FROM     ${myEmployee.sqlMap.table.toSql()}
+		<if test="myEmployee.roleCode != null and myEmployee.roleCode != ''">
+			JOIN ${_prefix}sys_user_role ur ON ur.user_code = a.emp_code
+		</if>
+		<where>
+			a.status = '0'
+			<if test="myEmployee.roleCode != null and myEmployee.roleCode != ''">
+				AND  ur.role_code = #{myEmployee.roleCode}
+			</if>
+			<if test="myEmployee.office.officeName != null and myEmployee.office.officeName != ''">
+				AND a.office_name = #{myEmployee.office.officeName}
+			</if>
+			<if test="myEmployee.company.companyName != null and myEmployee.company.companyName != ''">
+				AND a.company_name = #{myEmployee.company.companyName}
+			</if>
+			<if test="myEmployee.empName != null and myEmployee.empName != ''">
+				AND a.emp_name like concat('%',#{myEmployee.empName},'%')
+			</if>
+			<if test="myEmployee.flag != null and myEmployee.flag != ''">
+				AND a.flag = #{myEmployee.flag}
+			</if>
+		</where>
+		ORDER BY ${myEmployee.sqlMap.order.toSql()}
+		LIMIT #{first},#{pageSize}
+	</select>
+
+	<!-- 统计信息-->
+	<select id="findCountByRole" resultType="long">
+		SELECT count(*)
+		FROM ${_prefix}sys_employee a
+		<if test="roleCode != null and roleCode != ''">
+			JOIN ${_prefix}sys_user_role ur ON ur.user_code = a.emp_code
+		</if>
+		<where>
+			<if test="roleCode != null and roleCode != ''">
+				ur.role_code = #{roleCode}
+			</if>
+		</where>
+	</select>
+
+	<select id="getOfficeCodeByEmpNme" resultType="string">
+		SELECT
+		office_code
+		FROM
+		js_sys_employee
+		<where>
+			emp_name = #{empName}
+		</where>
+	</select>
+
+	<select id="getEmpNameByOfficeCode" resultType="string">
+		SELECT
+		emp_name from js_sys_employee
+		<where>
+			office_code = #{officeCode} and emp_code in
+			(
+			select emp_code from js_sys_employee_post
+			<where>
+				post_code = 'dept'
+			</where>
+			)
+		</where>
+	</select>
+
+	<select id="getEmpCodeByEmpName" resultType="string">
+		SELECT
+		emp_code
+		from
+		js_sys_employee
+		where emp_name = #{empName}
+	</select>
+
+	<select id="getPostcodeByEmpcode" resultType="string">
+		select post_code
+		from js_sys_employee_post
+		where emp_code = #{empCode}
+	</select>
+	
+	<select id="findList" resultType="MyEmployee">
+		select * from js_sys_employee
+	</select>
+</mapper>

@@ -1,0 +1,119 @@
+<% layout('/layouts/default.html', {title: '员工请假详情', libs: ['validate']}){ %>
+<div class="main-content">
+	<div class="box box-main">
+		<div class="box-header with-border">
+			<div class="box-title">
+				<i class="fa fa-list-alt"></i> ${text('员工请假详情')}
+			</div>
+			<div class="box-tools pull-right">
+				<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+			</div>
+		</div>
+		<#form:form id="inputForm" model="${vacate}" action="${ctx}/employee/myEmployee/handle_task" method="post" class="form-horizontal">
+			<div class="box-body">
+				<div class="form-unit">${text('员工请假信息')}</div>
+				<#form:hidden path="vaId"/>
+				<div class="row">
+					<div class="col-xs-6">
+						<div class="form-group">
+							<label class="control-label col-sm-4" title="">
+								<span class="required "></span> 员工编号：<i class="fa icon-question hide"></i></label>
+							<div class="col-sm-8">
+								<#form:input path="empCode" maxlength="100" class="form-control required" readOnly="true"/>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-6">
+						<div class="form-group">
+							<label class="control-label col-sm-4" title="">
+								<span class="required "></span> 请假理由：<i class="fa icon-question hide"></i></label>
+							<div class="col-sm-8">
+								<#form:input path="empReason" maxlength="1024" class="form-control required" readOnly="true"/>
+							</div>
+						</div>
+					</div>
+					<!--<div class="col-xs-6">
+						<div class="form-group">
+							<label class="control-label col-sm-4" title="">
+								<span class="required hide">*</span> 经理审批理由：<i class="fa icon-question hide"></i></label>
+							<div class="col-sm-8">
+								<#form:input path="manReason" maxlength="1024" class="form-control"/>
+							</div>
+						</div>
+					</div>-->
+				</div>
+				<div class="row">
+					<div class="col-xs-6">
+						<div class="form-group">
+							<label class="control-label col-sm-4" title="">
+								<span class="required "></span> 请假开始时间：<i class="fa icon-question hide"></i></label>
+							<div class="col-sm-8">
+								<#form:input path="startTime" dataFormat="date" class="form-control required" readOnly="true"/>
+							</div>
+						</div>
+					</div>
+					<div class="col-xs-6">
+						<div class="form-group">
+							<label class="control-label col-sm-4" title="">
+								<span class="required "></span> 请假结束时间：<i class="fa icon-question hide"></i></label>
+							<div class="col-sm-8">
+								<#form:input path="endTime" dataFormat="date" class="form-control required" readOnly="true"/>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-12">
+						<div class="form-group">
+							<label class="control-label col-sm-2" title="">
+								<span class="required hide">*</span> 审核：<i class="fa icon-question hide"></i></label>
+							<div class="col-sm-10">
+								<#form:radio path="status" dictType="vacate_status" class="form-control required"/>
+							</div>
+						</div>
+					</div>
+					<div class="col-xs-12">
+						<div class="form-group">
+							<label class="control-label col-sm-2" title="">
+								<span class="required hide">*</span> 审核说明：<i class="fa icon-question hide"></i></label>
+							<div class="col-sm-10">
+								<#form:textarea path="manReason" rows="4" maxlength="1024" class="form-control"/>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="box-footer">
+				<div class="row">
+					<div class="col-sm-offset-2 col-sm-10">
+						<% if (hasPermi('user:dept:verify')){ %>
+							<button type="submit" class="btn btn-sm btn-primary" id="btnSubmit"><i class="fa  fa-check"></i> ${text('提交审核')}</button>&nbsp;
+						<% } %>
+						<button type="button" class="btn btn-sm btn-default" id="btnCancel" onclick="js.closeCurrentTabPage()"><i class="fa  fa-close (alias)"></i> ${text('关 闭')}</button>
+					</div>
+				</div>
+			</div>
+		</#form:form>
+	</div>
+</div>
+<% } %>
+<script>
+$("#inputForm").validate({
+	submitHandler: function(form){
+		js.ajaxSubmitForm($(form), function(data){
+			js.showMessage(data.message);
+			if(data.result == Global.TRUE){
+				window.location.href = 'http://127.0.0.1:8980/js/a/index#vacation/vacate/list_task';
+				/*js.closeCurrentTabPage(function(contentWindow){
+					contentWindow.page();
+				});*/
+			}
+			if(data.result == Global.False){
+				js.showErrorMessage(data.message);
+			}
+		}, "json");
+    }
+});
+</script>
