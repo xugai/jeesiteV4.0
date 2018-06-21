@@ -18,7 +18,7 @@ import com.jeesite.common.mybatis.mapper.query.QueryType;
  */
 @Table(name="t_resume", alias="a", columns={
 		@Column(name="re_id", attrName="reId", label="re_id", isPK=true),
-		@Column(name="emp_code", attrName="empCode", label="emp_code"),
+		@Column(name="emp_code", attrName="empCode", label="emp_code", queryType=QueryType.LIKE),
 		@Column(name="avatar", attrName="avatar", label="avatar"),
 		@Column(includeEntity=DataEntity.class),
 	}, orderBy="a.update_date DESC"

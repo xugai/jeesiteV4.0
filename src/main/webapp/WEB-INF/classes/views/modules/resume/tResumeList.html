@@ -17,12 +17,10 @@
                             data-page-no="${parameter.pageNo}" data-page-size="${parameter.pageSize}" data-order-by="${parameter.orderBy}">
                 <div class="form-group">
                 <label class="control-label">用户编号：</label>
-                <div class="control-inline width-120" >
-                    <#form:treeselect id="empCode" title="${text('用户选择')}"
-                            path="empCode" labelPath=""
-                            url="${ctx}/sys/office/treeData?isLoadUser=true" allowClear="true"/>
-                </div>
-            </div>
+					<div class="control-inline">
+						<#form:input path="empCode" maxlength="1024" class="form-control width-120"/>
+					</div>
+            	</div>
 				<div class="form-group">
 					<label class="control-label">备注：</label>
 					<div class="control-inline">
@@ -55,7 +53,6 @@ $('#dataGrid').dataGrid({
 		{header:'用户编号', name:'empCode', index:'a.emp_code', width:150, align:"left", frozen:true, formatter: function(val, obj, row, act){
 			return '<a href="${ctx}/resume/tResume/form?reId='+row.reId+'" class="btnList" data-title="${text('编辑t_resume')}">'+(val||row.id)+'</a>';
 		}},
-		{header:'上传路径', name:'avatar', index:'a.avatar', width:150, align:"left"},
 		{header:'创建时间', name:'createDate', index:'a.create_date', width:150, align:"center"},
 		{header:'备注', name:'remarks', index:'a.remarks', width:150, align:"left"},
 		{header:'状态', name:'status', index:'a.status', width:150, align:"center", formatter: function(val, obj, row, act){
