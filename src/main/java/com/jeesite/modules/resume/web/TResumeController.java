@@ -56,15 +56,16 @@ public class TResumeController extends BaseController {
 	public String list(TResume tResume, Model model, HttpServletRequest request) {
 		User user = UserUtils.getUser();
 		//查看用户是否是管理员
-		if (user.isAdmin() || user.isSuperAdmin()){
-            request.getSession().setAttribute("role","manager");
-			model.addAttribute("tResume", tResume);
-			return "modules/resume/tResumeList";
-		}
-		//查看用户是否有部长角色
+//		if (user.isAdmin() || user.isSuperAdmin()){
+//            request.getSession().setAttribute("role","manager");
+//			model.addAttribute("tResume", tResume);
+//			return "modules/resume/tResumeList";
+//		}
+		//查看该用户是否是部长
 		List<String> role = tResumeService.findRole(user.getUserCode());
 		for(String str:role){
 			if (str.equals("dept")){
+				//标识用户角色
                 request.getSession().setAttribute("role","dept");
 				model.addAttribute("tResume", tResume);
 				return "modules/resume/tResumeList";
@@ -74,8 +75,9 @@ public class TResumeController extends BaseController {
 		String userCode = user.getUserCode();
 		System.out.println("userCode----->"+userCode);
 		tResume = tResumeService.findByUserCode(userCode);
+		//标识用户角色
         request.getSession().setAttribute("role","user");
-		request.getSession().setAttribute("isAdmin","false");
+//		request.getSession().setAttribute("isAdmin","false");
 		model.addAttribute("tResume", tResume);
 		if (tResume != null && tResume.getEmpCode() == null){
 			tResume.setEmpCode(userCode);
@@ -91,7 +93,12 @@ public class TResumeController extends BaseController {
 	@ResponseBody
 	public Page<TResume> listData(TResume tResume, HttpServletRequest request, HttpServletResponse response) {
 		System.out.println("tResume-------》"+tResume.toString());
-		Page<TResume> page = tResumeService.findPage(new Page<TResume>(request, response), tResume);
+//		Page<TResume> page = tResumeService.findPage(new Page<TResume>(request, response), tResume);
+//		request.getSession().setAttribute("isAdmin","true");
+		System.out.println("listData");
+		Page<TResume> page = new Page<TResume>(request, response);
+		//根据角色返回数据
+		page = tResumeService.findListByOffice(page,tResume);
 		request.getSession().setAttribute("isAdmin","true");
 		return page;
 	}
@@ -104,8 +111,13 @@ public class TResumeController extends BaseController {
 	public String form(TResume tResume, Model model, HttpServletRequest request) {
 		try {
 		    String userType  = request.getSession().getAttribute("role").toString();
-            if (userType.equals("user"))
+		    //根据用户角色对同一个页面的数据进行不同的操作
+            if (userType.equals("user")){
                 tResume.setEmpCode(EmpUtils.getEmployee().getEmpCode());
+                model.addAttribute("role","user");
+            }else{
+                model.addAttribute("role","dept");
+            }
         }catch (NullPointerException ex){
 		    ex.getStackTrace();
         }
@@ -120,10 +132,10 @@ public class TResumeController extends BaseController {
 	@PostMapping(value = "save")
 	@ResponseBody
 	public String save(@Validated TResume tResume, HttpServletRequest request) {
-		String isAdmin = request.getSession().getAttribute("isAdmin").toString();
-		if (isAdmin.equals("false")){
-			tResume.setEmpCode(EmpUtils.getEmployee().getEmpCode());
-		}
+//		String isAdmin = request.getSession().getAttribute("isAdmin").toString();
+//		if (isAdmin.equals("false")){
+//			tResume.setEmpCode(EmpUtils.getEmployee().getEmpCode());
+//		}
 		tResumeService.save(tResume);
 		return renderResult(Global.TRUE, "保存简历成功！");
 	}
@@ -139,7 +151,7 @@ public class TResumeController extends BaseController {
 		tResumeService.update(tResume);
 		// 保存上传附件
 		FileUploadUtils.saveFileUpload(tResume.getReId(), "tResume_file");
-		return renderResult(Global.TRUE, "保存简历成功！");
+		return renderResult(Global.TRUE, "修改简历成功！");
 	}
 	/**
 	 * 停用t_resume
