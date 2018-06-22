@@ -2,6 +2,40 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jeesite.modules.resume.dao.TResumeDao">
 
+	<!-- 查询数据-->
+	<select id="findListByOffice" resultType="TResume">
+		SELECT   ${tResume.sqlMap.column.toSql()}
+		FROM    t_resume a,
+        (select e.office_code
+        from ${_prefix}sys_employee e
+        where e.emp_code = #{tResume.empCode}
+        ) b
+		<where>
+			a.status = 0
+            AND a.emp_code in (select e.emp_code
+            from ${_prefix}sys_employee e
+            where e.office_code = b.office_code )
+		</where>
+		ORDER BY ${tResume.sqlMap.order.toSql()}
+		LIMIT #{first},#{pageSize}
+	</select>
+
+	<!-- 统计信息-->
+	<select id="findCountByOffice" resultType="Long">
+		SELECT count(*)
+		FROM t_resume a ,
+		(select e.office_code
+		from ${_prefix}sys_employee e
+		where e.emp_code = #{empCode}
+		) b
+		<where>
+            a.status = 0
+			AND a.emp_code in (select e.emp_code
+			from ${_prefix}sys_employee e
+			where e.office_code = b.office_code )
+		</where>
+	</select>
+
 	<!-- 根据用户id查询数据-->
 	<select id="findByUserCode" resultType="TResume">
 		SELECT <include refid="tResumeColumns"/>

@@ -5,6 +5,7 @@ package com.jeesite.modules.resume.service;
 
 import java.util.List;
 
+import com.jeesite.modules.sys.utils.EmpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,8 @@ import com.jeesite.modules.file.utils.FileUploadUtils;
 @Service
 @Transactional(readOnly=true)
 public class TResumeService extends CrudService<TResumeDao, TResume> {
+	@Autowired
+	private TResumeDao tResumeDao;
 	/**
 	 * 获取单条数据
 	 * @param tResume
@@ -86,5 +89,20 @@ public class TResumeService extends CrudService<TResumeDao, TResume> {
 		super.delete(tResume);
 	}
 
-
+	/**
+	 * 根据部门查看简历信息
+	 * @param page
+	 * @param resume
+	 * @return
+	 */
+	public Page<TResume> findListByOffice(Page page,TResume resume){
+		int first = (page.getPageNo()-1)*page.getPageSize();
+		System.out.println("first:"+first);
+		String emp_code = EmpUtils.getEmployee().getEmpCode();
+		resume.setEmpCode(emp_code);
+		page.setCount(tResumeDao.findCountByOffice(resume));
+		page.setList(tResumeDao.findListByOffice(first,page.getPageSize(),resume));
+		System.out.println("count:"+page.getCount());
+		return page;
+	}
 }

@@ -93,8 +93,13 @@ public class TResumeController extends BaseController {
 	@ResponseBody
 	public Page<TResume> listData(TResume tResume, HttpServletRequest request, HttpServletResponse response) {
 		System.out.println("tResume-------》"+tResume.toString());
-		Page<TResume> page = tResumeService.findPage(new Page<TResume>(request, response), tResume);
+//		Page<TResume> page = tResumeService.findPage(new Page<TResume>(request, response), tResume);
 //		request.getSession().setAttribute("isAdmin","true");
+		System.out.println("listData");
+		Page<TResume> page = new Page<TResume>(request, response);
+		//根据角色返回数据
+		page = tResumeService.findListByOffice(page,tResume);
+		request.getSession().setAttribute("isAdmin","true");
 		return page;
 	}
 
