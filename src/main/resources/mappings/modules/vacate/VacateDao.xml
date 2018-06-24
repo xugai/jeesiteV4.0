@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jeesite.modules.vacate.dao.VacateDao">
+
+	<!-- 查询数据
+	<select id="findList" resultType="Vacate">
+		SELECT ${sqlMap.column.toSql()}
+		FROM ${sqlMap.table.toSql()}
+		<where>
+			${sqlMap.where.toSql()}
+		</where>
+		ORDER BY ${sqlMap.order.toSql()}
+	</select> -->
+
+	<sql id="allColumns">
+		a.va_id,
+		a.emp_code,
+		a.emp_reason,
+		a.man_reason,
+		a.start_time,
+		a.end_time,
+		a.create_by,
+		a.create_date,
+		a.update_by,
+		a.update_date,
+		a.remarks,
+		a.status
+	</sql>
+
+	<select id="getEmpCodeByEmpName" resultType="string">
+		SELECT
+		emp_code
+		from js_sys_employee
+		<where>
+			emp_name = #{empName}
+		</where>
+	</select>
+
+	<select id="getByEmpCode" resultType="Vacate">
+		SELECT
+		<include refid="allColumns"/>
+		from t_vacate a
+		<where>
+			update_by = #{empCode}
+		</where>
+	</select>
+
+	<select id="getVaIdByUpdator" resultType="string">
+		SELECT
+		va_id
+		from t_vacate
+		where
+		update_by = #{empCode}
+	</select>
+
+	<select id="queryVacation" resultType="Vacate">
+		SELECT
+		<include refid="allColumns"/>
+		from t_vacate a
+		<where>
+			${sqlMap.where.toSql()}
+			<if test="status != '' &amp;&amp; status != null">
+				and a.status = #{status}
+			</if>
+		</where>
+	</select>
+
+
+	<update id="updateByVerify">
+		UPDATE
+		t_vacate
+		set man_reason = #{manReason}, status = #{status}, update_by = #{updator}
+		where
+		va_id = #{vaId}
+	</update>
+</mapper>

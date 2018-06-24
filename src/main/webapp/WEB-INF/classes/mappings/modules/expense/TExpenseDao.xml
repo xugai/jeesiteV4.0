@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jeesite.modules.expense.dao.TExpenseDao">
+	
+	<!-- 查询数据
+	<select id="findList" resultType="TExpense">
+		SELECT ${sqlMap.column.toSql()}
+		FROM ${sqlMap.table.toSql()}
+		<where>
+			${sqlMap.where.toSql()}
+		</where>
+		ORDER BY ${sqlMap.order.toSql()}
+	</select> -->
+	
+	<select id="getBypiid" resultType="TExpense">
+		select * from t_expense where piid = #{piid}
+	</select>
+	
+	<select id="getByEmpCode" resultType="TExpense">
+		select * from t_expense where emp_code = #{userCode} order by ex_time DESC,status
+	</select>
+	
+	<select id="getCaiwuApproveList" resultType="TExpense">
+		select * from t_expense where office = #{officeName} and  status !='3' and status !='2'
+		union
+		select * from t_expense where status = '1'
+	</select>
+	
+	<select id="getElseApproveList" resultType="TExpense">
+		select * from t_expense where office = #{officeName} and status = '0'
+	</select>
+</mapper>

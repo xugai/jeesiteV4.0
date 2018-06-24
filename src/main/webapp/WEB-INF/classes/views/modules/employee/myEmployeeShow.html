@@ -1,0 +1,100 @@
+<% layout('/layouts/default.html', {title: '员工表管理', libs: ['']}){ %>
+<style type="text/css">
+    .pad1{
+        padding:  10px;
+    }
+</style>
+<div class="main-content" xmlns: xmlns:>
+	<div class="box box-main">
+		<div class="box-header">
+			<div class="box-title">
+				<i class="fa fa-list-alt"></i> ${text('员工表管理')}
+			</div>
+			<div class="box-tools pull-right">
+
+			</div>
+		</div>
+        <!---->
+		<#form:form id="EmployeeForm" model="${myEmployee}" action="${ctx}/employee/myEmployee/form" method="post">
+		<div class="box-body">
+            <div class="row pad">
+                <div class="col-xs-6 pad1">
+                    <div class="form-group">
+                        <label class="control-label col-sm-4" title="">
+                            <span class="required ">*</span> 员工编号：<i class="fa icon-question hide"></i></label>
+                        <div class="col-sm-6">
+                            <#form:input path="empCode" maxlength="100" class="form-control required" readonly="true"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6 pad1 ">
+                    <div class="form-group">
+                        <label class="control-label col-sm-4" title="">
+                            <span class="required ">*</span> 员工姓名：<i class="fa icon-question hide"></i></label>
+                        <div class="col-sm-6">
+                            <#form:input path="empName" maxlength="100" class="form-control required" readonly="true"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6 pad1">
+                    <div class="form-group">
+                        <label class="control-label col-sm-4" title="">
+                            <span class="required hide">*</span> 英文名：<i class="fa icon-question hide"></i></label>
+                        <div class="col-sm-6">
+                            <#form:input path="empNameEn" maxlength="100" class="form-control" readonly="true"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row pad">
+                <div class="col-xs-6">
+                    <div class="form-group">
+                        <label class="control-label col-sm-4" title="">
+                            <span class="required ">*</span> ${text('归属机构')}：<i class="fa icon-question hide"></i></label>
+                        <div class="col-sm-6">
+                            <#form:input path="office.officeName" maxlength="100" class="form-control" readonly="true"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <div class="form-group">
+                        <label class="control-label col-sm-4" title="">
+                            <span class="required hide">*</span> ${text('归属公司')}：<i class="fa icon-question hide"></i></label>
+                        <div class="col-sm-6">
+                            <#form:input path="company.companyName" maxlength="100" class="form-control" readonly="true"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row pad">
+                <div class="col-xs-12">
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" title="">
+                            <span class="required hide">*</span> remarks：<i class="fa icon-question hide"></i></label>
+                        <div class="col-sm-10">
+                            <#form:textarea path="remarks" rows="4" maxlength="1024" class="form-control" readonly="true"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+		</div>
+			<div class="box-footer">
+
+				<div class="row">
+                    <%
+                    if(myEmployee.flag == '1'){
+                    %>
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" class="btn btn-sm btn-primary" id="btnSubmit"><i class="fa fa-check"></i> ${text('修 改')}</button>&nbsp;
+                    </div>
+                    <%
+                    }
+                    %>
+
+				</div>
+
+			</div>
+		</#form:form>
+	</div>
+</div>
+<% } %>

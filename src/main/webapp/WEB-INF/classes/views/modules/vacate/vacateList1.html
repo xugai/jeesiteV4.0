@@ -1,0 +1,98 @@
+<% layout('/layouts/default.html', {title: '我的请假单', libs: ['dataGrid']}){ %>
+<div class="main-content">
+	<div class="box box-main">
+		<div class="box-header">
+			<div class="box-title">
+				<i class="fa fa-list-alt"></i> ${text('我的请假单一览')}
+			</div>
+			<div class="box-tools pull-right">
+				<a href="#" class="btn btn-default" id="btnSearch" title="${text('查询')}"><i class="fa fa-filter"></i> ${text('查询')}</a>
+			</div>
+		</div>
+		<div class="box-body">
+			<#form:form id="searchForm" model="${vacate}" action="${ctx}/vacate/vacate/query_vacation" method="post" class="form-inline hide"
+					data-page-no="${parameter.pageNo}" data-page-size="${parameter.pageSize}" data-order-by="${parameter.orderBy}">
+				<!--<div class="form-group">
+					<label class="control-label">请假单编号：</label>
+					<div class="control-inline">
+						<#form:input path="vaId" maxlength="100" class="form-control width-120"/>
+					</div>
+				</div>-->
+				<!--<div class="form-group">
+					<label class="control-label">请假理由：</label>
+					<div class="control-inline">
+						<#form:input path="empReason" maxlength="1024" class="form-control width-120"/>
+					</div>
+				</div>-->
+				<!--<div class="form-group">
+					<label class="control-label">请假开始时间：</label>
+					<div class="control-inline">
+						<#form:input path="startTime" dataFormat="date" class="form-control width-120"/>
+					</div>
+				</div>-->
+				<!--<div class="form-group">
+					<label class="control-label">请假结束时间：</label>
+					<div class="control-inline">
+						<#form:input path="endTime" class="form-control width-120"/>
+					</div>
+				</div>-->
+				<div class="form-group">
+					<label class="control-label">审核状态</label>
+					<div class="control-inline width-120">
+						<#form:select path="status" dictType="verify_status" blankOption="true" class="form-control"/>
+					</div>
+				</div>
+				<!--<div class="form-group">
+					<label class="control-label">审核说明</label>
+					<div class="control-inline width-120">
+						<#form:select path="manReason" dictType="sys_search_status" blankOption="true" class="form-control"/>
+					</div>
+				</div>-->
+				<div class="form-group">
+					<button type="submit" class="btn btn-primary btn-sm">${text('查询')}</button>
+					<button type="reset" class="btn btn-default btn-sm">${text('重置')}</button>
+				</div>
+			</#form:form>
+			<table id="dataGrid"></table>
+			<div id="dataGridPage"></div>
+		</div>
+	</div>
+</div>
+<% } %>
+<script>
+// 初始化DataGrid对象
+$('#dataGrid').dataGrid({
+	searchForm: $("#searchForm"),
+	columnModel: [
+		{header:'请假单编号', name:'vaId', index:'a.va_id', width:150, align:"center", frozen:true},
+		{header:'请假理由', name:'empReason', index:'a.emp_reason', width:150, align:"center"},
+		{header:'请假开始时间', name:'startTime', index:'a.start_time', width:150, align:"center",
+			formatter:'date', formatoptions:{srcformat:'Y-m-d',newformat:'Y-m-d'}
+		},
+		{header:'请假结束时间', name:'endTime', index:'a.end_time', width:150, align:"center",
+			formatter:'date', formatoptions:{srcformat:'Y-m-d',newformat:'Y-m-d'}
+		},
+//		{header:'创建时间', name:'createDate', index:'a.create_date', width:150, align:"center"},
+//		{header:'备注', name:'remarks', index:'a.remarks', width:150, align:"left"},
+		{header:'审核状态', name:'status', index:'a.status', width:150, align:"center", formatter: function(val, obj, row, act){
+			return js.getDictLabel(${@DictUtils.getDictListJson('verify_status')}, val, '${text('未知')}', true);
+		}},
+		{header:'审核说明', name:'manReason', index:'a.man_reason', width:150, align:"left"},
+		/*{header:'${text('操作')}', name:'actions', width:120, sortable:false, title:false, align:"center", formatter: function(val, obj, row, act){
+			var actions = [];
+			<% if(hasPermi('user:dept:opera')){ %>
+				actions.push('<a href="${ctx}/vacation/vacate/form?vaId='+row.vaId+'" class="btnList" title="${text('查看详情')}"><i class="fa fa-eye"></i></a>&nbsp;');
+				/!*actions.push('<a href="${ctx}/vacation/vacate/delete?vaId='+row.vaId+'" class="btnList" title="${text('删除请假表信息维护')}" data-confirm="${text('确认要删除该请假表信息维护吗？')}"><i class="fa fa-trash-o"></i></a>&nbsp;');*!/
+			<% } %>
+			return actions.join('');
+		}}*/
+	],
+	// 加载成功后执行事件
+	ajaxSuccess: function(data){
+
+	}
+});
+</script>
+<script>
+
+</script>
