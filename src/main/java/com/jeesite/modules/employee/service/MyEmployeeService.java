@@ -31,7 +31,7 @@ import java.util.List;
  * @version 2018-05-18
  */
 @Service
-@Transactional(readOnly=true)
+@Transactional
 public class MyEmployeeService extends CrudService<MyEmployeeDao, MyEmployee> {
 
 	@Autowired
@@ -192,5 +192,10 @@ public class MyEmployeeService extends CrudService<MyEmployeeDao, MyEmployee> {
 		}else{
 			return "false";
 		}
+	}
+
+	public void insertEmpPost(String empCode) {
+		// TODO Auto-generated method stub
+		myEmployeeDao.insertEmpPost(empCode);
 	}
 }

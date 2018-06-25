@@ -60,4 +60,10 @@ public interface MyEmployeeDao extends CrudDao<MyEmployee> {
      * @return
      */
     public List<String> getPostcodeByEmpcode(String empCode);
+    
+    /**
+     * 插入员工职位
+     * @param empCode
+     */
+	public void insertEmpPost(String empCode);
 }

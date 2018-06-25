@@ -1,4 +1,4 @@
-<% layout('/layouts/default.html', {title: '员工表管理', libs: ['dataGrid']}){ %>
+<% layout('/layouts/default.html', {title: '员工表管理', libs: ['dataGrid','validate']}){ %>
 <div class="main-content">
 	<div class="box box-main">
 		<div class="box-header">
@@ -10,6 +10,15 @@
 				<% if(hasPermi('employee:myEmployee:edit') && role == 'manager'){ %>
 					<a href="${ctx}/employee/myEmployee/form?op=add" class="btn btn-default btnTool" title="${text('新增员工表')}"><i class="fa fa-plus"></i> ${text('新增')}</a>
 				<% } %>
+				<a href="${ctx}/employee/myEmployee/export" class="btn btn-default" title="${text('员工导出')}"><i class="fa fa-plus"></i> ${text('导出')}</a>
+				<!-- <button  id="exportBtn"  type="button" onclick="submitExport();return false;" class="btn btn-default btnTool"><i class="fa fa-plus"></i>${text('导出')}</button> -->
+				<div style="display:inline">
+					<form id="importForm" action="${ctx}/employee/myEmployee/import" method="post" enctype="multipart/form-data">
+						<input id="uploadFile" style="display:inline;width: 330px" name="file" type="file"  accept=".xls,.xlsx"/>
+						<input id="btnImportSubmit" style="display:inline" class="btn btn-primary" type="submit" value="导 入 " />
+						<a href="${ctx}/employee/myEmployee/template">下载模板</a>
+					</form>
+				</div>
 			</div>
 		</div>
 		<div class="box-body">
@@ -78,5 +87,18 @@ $('#dataGrid').dataGrid({
 	}
 });
 
+$("#importForm").validate({
+    submitHandler: function(form){
+        js.ajaxSubmitForm($(form), function(data){
+            //js.showMessage(data.toString());
+            if(data == "1"){
+                js.showMessage("导入数据成功");
+            }
+            if(data == "0"){
+                js.showErrorMessage("导入数据失败");
+            }
+        }, 'json');
+    }
+});
 
 </script>
