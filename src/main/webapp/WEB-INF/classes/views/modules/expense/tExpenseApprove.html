@@ -1,0 +1,89 @@
+<% layout('/layouts/default.html', {title: 'expense管理', libs: ['dataGrid']}){ %>
+<div class="main-content">
+	<div class="box box-main">
+		<div class="box-header">
+			<div class="box-title">
+				<i class="fa fa-list-alt"></i> ${text('审批列表')}
+			</div>
+			<div class="box-tools pull-right">
+				<a href="#" class="btn btn-default" id="btnSearch" title="${text('查询')}"><i class="fa fa-filter"></i> ${text('查询')}</a>
+				<% if(hasPermi('expense:tExpense:edit')){ %>
+					<a href="${ctx}/expense/tExpense/form" class="btn btn-default btnTool" title="${text('新增expense')}"><i class="fa fa-plus"></i> ${text('新增')}</a>
+				<% } %>
+			</div>
+		</div>
+		<div class="box-body">
+			<#form:form id="searchForm" model="${tExpense}" action="${ctx}/expense/tExpense/approveListData" method="post" class="form-inline hide"
+					data-page-no="${parameter.pageNo}" data-page-size="${parameter.pageSize}" data-order-by="${parameter.orderBy}">
+				<div class="form-group">
+					<label class="control-label">员工编号：</label>
+					<div class="control-inline">
+						<#form:input path="empCode" maxlength="100" class="form-control width-120"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label">报销金额：</label>
+					<div class="control-inline">
+						<#form:input path="money" maxlength="11" class="form-control width-120"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label">报销时间：</label>
+					<div class="control-inline">
+						<#form:input path="exTime" readonly="true" maxlength="20" class="form-control Wdate-date"
+							dataFormat="date" onclick="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:false});"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="control-label">状态：</label>
+					<div class="control-inline width-120">
+						<#form:select path="status" dictType="expense_status" blankOption="true" class="form-control"/>
+					</div>
+				</div>
+				<div class="form-group">
+					<button type="submit" class="btn btn-primary btn-sm">${text('查询')}</button>
+					<button type="reset" class="btn btn-default btn-sm">${text('重置')}</button>
+				</div>
+			</#form:form>
+			<table id="dataGrid"></table>
+			<div id="dataGridPage"></div>
+		</div>
+	</div>
+</div>
+<% } %>
+<script>
+// 初始化DataGrid对象
+$('#dataGrid').dataGrid({
+	searchForm: $("#searchForm"),
+	columnModel: [
+		{header:'员工编号', name:'empCode', index:'a.emp_code', width:150, align:"left", frozen:true, formatter: function(val, obj, row, act){
+			return '<a href="${ctx}/expense/tExpense/form?exId='+row.exId+'" class="btnList" data-title="${text('编辑expense')}">'+(val||row.id)+'</a>';
+		}},
+		{header:'报销事件', name:'empMatter', index:'a.emp_matter', width:150, align:"left"},
+		{header:'报销金额', name:'money', index:'a.money', width:150, align:"center"},
+		{header:'报销时间', name:'exTime', index:'a.ex_time', width:150, align:"center"},
+		{header:'备注', name:'remarks', index:'a.remarks', width:150, align:"left"},
+		{header:'状态', name:'status', index:'a.status', width:150, align:"center", formatter: function(val, obj, row, act){
+			return js.getDictLabel(${@DictUtils.getDictListJson('expense_status')}, val, '${text('未知')}', true);
+		}},
+		{header:'${text('操作')}', name:'actions', width:120, sortable:false, title:false, formatter: function(val, obj, row, act){
+			var actions = [];
+		/* 	<% if(hasPermi('expense:tExpense:view')){ %>
+				actions.push('<a href="${ctx}/expense/tExpense/pass?exId='+row.exId+'" class="btnList" title="${text('通过')}" data-confirm="${text('确认通过该报销吗？')}"><i class="fa fa-pencil"></i></a>&nbsp;');
+				actions.push('<a href="${ctx}/expense/tExpense/reject?exId='+row.exId+'" class="btnList" title="${text('驳回')}" data-confirm="${text('确认驳回该报销吗？')}"><i class="fa fa-trash-o"></i></a>&nbsp;');
+			<% } %> */
+			
+				/* actions.push('<a href="${ctx}/expense/tExpense/pass?exId='+row.exId+'" class="btnList" title="${text('通过')}" data-confirm="${text('确认通过该报销吗？')}">通过</a>&nbsp;');
+				actions.push('<a href="${ctx}/expense/tExpense/reject?exId='+row.exId+'" class="btnList" title="${text('驳回')}" data-confirm="${text('确认驳回该报销吗？')}">驳回</a>&nbsp;');
+			 */
+			 actions.push('<a href="${ctx}/expense/tExpense/show?exId='+row.exId+'" class="btnList" title="${text('查看')}" >查看</a>&nbsp;');
+			
+			return actions.join('');
+		}}
+	],
+	// 加载成功后执行事件
+	ajaxSuccess: function(data){
+		
+	}
+});
+</script>

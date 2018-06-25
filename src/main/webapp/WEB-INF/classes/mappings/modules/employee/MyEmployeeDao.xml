@@ -92,4 +92,9 @@
 		from js_sys_employee_post
 		where emp_code = #{empCode}
 	</select>
+	
+	
+	<select id="insertEmpPost">
+		INSERT js_sys_user_role VALUE(#{empCode},'user');
+	</select>
 </mapper>

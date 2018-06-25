@@ -3,20 +3,29 @@
  */
 package com.jeesite.modules.employee.entity;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import javax.validation.constraints.NotNull;
+
+import org.apache.ibatis.type.Alias;
+
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
 import com.jeesite.common.entity.BaseEntity;
 import com.jeesite.common.entity.DataEntity;
 import com.jeesite.common.mybatis.annotation.Column;
 import com.jeesite.common.mybatis.annotation.JoinTable;
 import com.jeesite.common.mybatis.annotation.Table;
 import com.jeesite.common.mybatis.mapper.query.QueryType;
+import com.jeesite.common.utils.excel.annotation.ExcelField;
+import com.jeesite.common.utils.excel.annotation.ExcelField.Align;
 import com.jeesite.modules.sys.entity.Company;
 import com.jeesite.modules.sys.entity.Employee;
 import com.jeesite.modules.sys.entity.Office;
-import org.apache.ibatis.type.Alias;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
+import com.jeesite.modules.sys.entity.User;
 
-import javax.validation.constraints.NotNull;
+
 
 /**
  * 员工表Entity
@@ -88,6 +97,7 @@ public class MyEmployee extends DataEntity<MyEmployee> {
 	private String flag;		// flag
 	private Employee employee;
 	private String RoleCode;
+
 	public MyEmployee() {
 		this(null);
 	}
@@ -112,6 +122,7 @@ public class MyEmployee extends DataEntity<MyEmployee> {
 		RoleCode = roleCode;
 	}
 
+	@ExcelField(title="员工编号",align=Align.CENTER,sort=1)
 	public String getEmpCode() {
 		return empCode;
 	}
@@ -122,6 +133,7 @@ public class MyEmployee extends DataEntity<MyEmployee> {
 
 	@NotBlank(message="员工姓名不能为空")
 	@Length(min=0, max=100, message="员工姓名长度不能超过 100 个字符")
+	@ExcelField(title="员工姓名",align=Align.CENTER,sort=10)
 	public String getEmpName() {
 		return empName;
 	}
@@ -131,6 +143,7 @@ public class MyEmployee extends DataEntity<MyEmployee> {
 	}
 
 	@Length(min=0, max=100, message="英文名长度不能超过 100 个字符")
+	@ExcelField(title="英文名",align=Align.CENTER,sort=20)
 	public String getEmpNameEn() {
 		return empNameEn;
 	}
@@ -141,6 +154,8 @@ public class MyEmployee extends DataEntity<MyEmployee> {
 	@NotNull(
 			message = "归属机构不能为空"
 	)
+	
+	@ExcelField(title="部门名称",align=Align.CENTER ,sort=80)
 	public Office getOffice() {
 		if (this.office == null) {
 			this.office = new Office();
@@ -156,6 +171,7 @@ public class MyEmployee extends DataEntity<MyEmployee> {
 	@NotNull(
 			message = "归属公司不能为空"
 	)
+	@ExcelField(title="公司名称",align=Align.CENTER ,sort=90)
 	public Company getCompany() {
 		if (this.company == null) {
 			this.company = new Company();
@@ -166,9 +182,10 @@ public class MyEmployee extends DataEntity<MyEmployee> {
 	public void setCompany(Company company) {
 		this.company = company;
 	}
-
+	
 	@NotBlank(message="flag不能为空")
 	@Length(min=0, max=1, message="flag长度不能超过 1 个字符")
+	@ExcelField(title="flag",align=Align.CENTER ,dictType="js_sys_empFlag",sort=100)
 	public String getFlag() {
 		return flag;
 	}
@@ -177,6 +194,40 @@ public class MyEmployee extends DataEntity<MyEmployee> {
 		this.flag = flag;
 	}
 
+	@ExcelField(title="状态",align=Align.CENTER ,sort=110,dictType="sys_status")
+	public String getStatus() {
+		return super.getStatus();
+	}
+	
+	@ExcelField(title="创建者",align=Align.CENTER ,sort=130)
+	public String getCreateBy() {
+		return super.getCreateBy();
+	}
+	
+	
+	@ExcelField(title="创建时间",align=Align.CENTER ,sort=150,dataFormat="yyyy-MM-dd hh:mm:ss")
+	public Date getCreateDate() {
+		return super.getCreateDate();
+	}
+	
+	@ExcelField(title="修改者",align=Align.CENTER ,sort=200)
+	public String getUpdateBy() {
+		return super.getUpdateBy();
+	}
+	
+	
+	@ExcelField(title="修改时间",align=Align.CENTER ,sort=230,dataFormat="yyyy-MM-dd hh:mm:ss")
+	public Date getUpdateDate() {
+		return super.getUpdateDate();
+	}
+	
+	@ExcelField(title="备注信息",align=Align.CENTER ,sort=250)
+	public String getRemarks() {
+		return super.getRemarks();
+	}
+	
+
+	
 	@Override
 	public String toString() {
 		return "MyEmployee{" +

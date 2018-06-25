@@ -3,8 +3,12 @@
  */
 package com.jeesite.modules.employee.web;
 
+import com.beust.jcommander.internal.Lists;
 import com.jeesite.common.config.Global;
 import com.jeesite.common.entity.Page;
+import com.jeesite.common.lang.DateUtils;
+import com.jeesite.common.utils.excel.ExcelExport;
+import com.jeesite.common.utils.excel.ExcelImport;
 import com.jeesite.common.web.BaseController;
 import com.jeesite.modules.employee.entity.MyEmployee;
 import com.jeesite.modules.employee.service.MyEmployeeService;
@@ -21,9 +25,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -40,6 +49,7 @@ public class MyEmployeeController extends BaseController {
 	@Autowired
 	private EmpUserService empUserService;
 
+	private List<MyEmployee> myEmployeeList;
 	/**
 	 * 获取数据
 	 * @param empCode
@@ -101,6 +111,7 @@ public class MyEmployeeController extends BaseController {
 
 	}
 
+	
 	/**
 	 * 查询列表数据
 	 * @param myEmployee
@@ -119,9 +130,11 @@ public class MyEmployeeController extends BaseController {
 		//根据角色返回数据
         myEmployee.setRoleCode("user");
 		page = myEmployeeService.findListByRole(page,myEmployee);
+		myEmployeeList = page.getList();
 		return page;
 	}
 
+	
 	/**
 	 *查看编辑表单
 	 * @param myEmployee
@@ -293,5 +306,91 @@ public class MyEmployeeController extends BaseController {
 			return renderResult(Global.TRUE, "审核成功！");
 		}
 		return renderResult(Global.FALSE, "审核失败，请查看错误原因！");
+	}
+	
+	/*
+	 * 员工信息导入
+	 * 
+	 */
+	@RequestMapping(value="import",method=RequestMethod.POST)
+	@RequiresPermissions("employee:myEmployee:edit")
+	public void importFile(MultipartFile file, HttpServletRequest request, HttpServletResponse response) {
+        ServletOutputStream out = null;
+		try {
+			out = response.getOutputStream();
+			// 创建导入Excel对象
+			ExcelImport ei = new ExcelImport(file,2,0);
+	        // 获取传入Excel文件的数据，根据传入参数类型，自动转换为对象
+			List<MyEmployee> list = ei.getDataList(MyEmployee.class);
+	        // 遍历数据，保存数据
+			for (MyEmployee myEmployee : list){
+				myEmployeeService.insert(myEmployee);
+				myEmployeeService.insertEmpPost(myEmployee.getEmpCode());
+			}
+            out.write("1".getBytes());
+			out.flush();
+			out.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println(renderResult(Global.FALSE, "导入数据失败"));
+			//addMessage(redirectAttributes, "导入模板下载失败！失败信息："+e.getMessage());
+			//return renderResult(Global.FALSE, "导入数据失败");
+			try {
+	            out.write("0".getBytes());
+	            out.flush();
+	            out.close();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+		//return renderResult(Global.TRUE, "导入数据成功");
+		
+	}
+	
+	/**
+	 * 员工信息表导出
+	 */
+	@RequestMapping(value="export")
+	@RequiresPermissions("employee:myEmployee:view")
+	public void exportFile(HttpServletResponse response,RedirectAttributes redirectAttributes){
+		try {
+	        String fileName = "用户数据"+DateUtils.getDate("yyyyMMddHHmmss")+".xlsx";
+	      /*  myEmployee.getOffice().setIsQueryChildren(true);
+			myEmployee.getCompany().setIsQueryChildren(true);
+			Page<MyEmployee> page = new Page<MyEmployee>(request, response);
+			//根据角色返回数据
+			page = myEmployeeService.findListByRole(page,myEmployee);
+	        //Page<MyEmployee> page = myEmployeeService.findPage(new Page<MyEmployee>(request, response), myEmployee); 
+	                // 1：创建Excel导出对象；2：设置数据；3：写入输出流；4：临时数据销毁*/
+			new ExcelExport("用户数据", MyEmployee.class)
+	                     .setDataList(myEmployeeList)
+	                     .write(response, fileName)
+	                     .dispose();
+		}catch (Exception e) {
+			e.printStackTrace();
+			//return renderResult(Global.FALSE, "导出用户失败！");
+			//return "modules/employee/myEmployeeList";
+		}
+
+		//return renderResult(Global.TRUE, "成功导出用户！");
+		//return "modules/employee/myEmployeeList";
+	
+	}
+	
+	/**
+	 * 导入模板下载
+	 */
+	@RequestMapping(value="template")
+	@RequiresPermissions("employee:myEmployee:edit")
+	public String importFileTemplate(HttpServletResponse response) {
+		try {
+			String fileName = "用户数据导入模板.xlsx";
+			List<MyEmployee> list = Lists.newArrayList(); 
+			new ExcelExport("用户数据", MyEmployee.class).setDataList(list).write(response, fileName).dispose();
+			return null;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }
